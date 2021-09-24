@@ -15,7 +15,7 @@ public class App extends Application {
     public void start(Stage window) throws Exception {
         window.setHeight(200);
         window.setWidth(300);
-        window.setTitle("Week 4 Class Exercise - Login Screen");
+        window.setTitle("Week 4 - Lesson 2 Exercise - Login Screen");
 
         //Basic Structure
         GridPane gridPane = new GridPane();
