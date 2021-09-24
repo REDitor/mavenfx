@@ -15,7 +15,7 @@ public class App extends Application {
 
     //I don't know if this is the right way to
     //be able to access the elements but this way
-    //I can use them in every method which I couldn't before.
+    //I can use them in every method.
 
     Label lblEuroAmount = new Label("Amount €:");
     TextField txtEuroAmount = new TextField();
