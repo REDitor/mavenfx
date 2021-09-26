@@ -2,7 +2,9 @@ package nl.inholland.javafx;
 
 public class Computer extends Player{
     @Override
-    public String writeTurn() {
-        return "O";
+    public String[][] setTurn(int row, int column) {
+        game.board[row][column] = "O";
+
+        return game.board;
     }
 }

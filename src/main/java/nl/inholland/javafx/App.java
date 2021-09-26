@@ -7,27 +7,21 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+
+import java.util.Random;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class App extends Application {
     Game game;
-    Player currentPlayer;
     Player user;
     Player computer;
 
     //region Elements
-    Button btnUpperLeft = new Button("_");
-    Button btnUpperMid = new Button("_");
-    Button btnUpperRight = new Button("_");
-    Button btnMiddleLeft = new Button("_");
-    Button btnMiddleMid = new Button("_");
-    Button btnMiddleRight = new Button("_");
-    Button btnLowerLeft = new Button("_");
-    Button btnLowerMid = new Button("_");
-    Button btnLowerRight = new Button("_");
+    Button[][] buttons = new Button[3][3];
     Label lblCurrentTurn = new Label("Current turn:");
     Label lblCurrentTurnResult = new Label();
     GridPane gridPane = new GridPane();
@@ -35,14 +29,15 @@ public class App extends Application {
 
     //region InitiateWindow
     private void loadWindow(Stage window) {
-        window.setHeight(400);
-        window.setWidth(350);
-        window.setTitle("Currency Converter");
+        window.setMinHeight(400);
+        window.setMinWidth(340);
+        window.setTitle("Tic-Tac-Toe");
 
         gridPane.setPadding(new Insets(10, 10, 10, 10));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
 
+        CreateButtons();
         styleNodes();
         assignGrid();
 
@@ -51,26 +46,43 @@ public class App extends Application {
         window.show();
     }
 
+    private void CreateButtons() {
+        for (int row = 0; row < buttons.length; row++) {
+            for (int col = 0; col < buttons[0].length; col++) {
+                buttons[row][col] = new Button("_");
+            }
+        }
+    }
+
     private void assignGrid() {
-        GridPane.setConstraints(btnUpperLeft, 0, 0);
-        GridPane.setConstraints(btnUpperMid, 1, 0);
-        GridPane.setConstraints(btnUpperRight, 2, 0);
-        GridPane.setConstraints(btnMiddleLeft, 0, 1);
-        GridPane.setConstraints(btnMiddleMid, 1, 1);
-        GridPane.setConstraints(btnMiddleRight, 2, 1);
-        GridPane.setConstraints(btnLowerLeft, 0, 2);
-        GridPane.setConstraints(btnLowerMid, 1, 2);
-        GridPane.setConstraints(btnLowerRight, 2, 2);
+        ColumnConstraints col1 = new ColumnConstraints();
+        col1.setPercentWidth(33);
+        ColumnConstraints col2 = new ColumnConstraints();
+        col2.setPercentWidth(33);
+        ColumnConstraints col3 = new ColumnConstraints();
+        col3.setPercentWidth(33);
+
+        gridPane.getColumnConstraints().addAll(col1, col2, col3);
+
+        for (int row = 0; row < buttons.length; row++) {
+            for (int col = 0; col < buttons[0].length; col++) {
+                GridPane.setConstraints(buttons[row][col], col, row);
+                gridPane.getChildren().add(buttons[row][col]);
+            }
+        }
+
         GridPane.setConstraints(lblCurrentTurn, 0, 3, 3, 1);
         GridPane.setConstraints(lblCurrentTurnResult, 1, 3);
 
-        gridPane.getChildren().addAll(btnUpperLeft, btnUpperMid, btnUpperRight, btnMiddleLeft, btnMiddleMid,
-                btnMiddleRight, btnLowerLeft, btnLowerMid, btnLowerRight, lblCurrentTurn,
-                lblCurrentTurnResult);
+        gridPane.getChildren().addAll(lblCurrentTurn, lblCurrentTurnResult);
     }
 
     private void styleNodes() {
-       //TODO: resize buttons
+        for (Button[] row : buttons) {
+            for (Button button : row) {
+                button.setPrefSize(100, 100);
+            }
+        }
     }
     //endregion
 
@@ -79,48 +91,64 @@ public class App extends Application {
         loadWindow(window);
         startGame();
 
-        btnUpperLeft.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                btnUpperLeft.setText(currentPlayer.writeTurn());
-                if (currentPlayer instanceof User) {
-                    currentPlayer = computer;
-                }else {
-                    currentPlayer = user;
+        while (!checkForWinner()) {
+            for (Button[] row : buttons) {
+                for (Button button : row) {
+                    button.setOnAction(new EventHandler<ActionEvent>() {
+                        @Override
+                        public void handle(ActionEvent actionEvent) {
+                            int rowIndex = GridPane.getRowIndex(button);
+                            int columnIndex = GridPane.getColumnIndex(button);
+
+                            game.board = user.setTurn(rowIndex, columnIndex);
+                            button.setText(game.board[rowIndex][columnIndex]);
+                            button.setDisable(true);
+
+                            Random rng = new Random();
+
+                            while (game.board[rowIndex][columnIndex] != null) {
+                                rowIndex = rng.nextInt(game.board.length);
+                                columnIndex = rng.nextInt(game.board[0].length);
+                            }
+                            game.board = computer.setTurn(rowIndex, columnIndex);
+                            button.setText(game.board[rowIndex][columnIndex]);
+                            button.setDisable(true);
+                        }
+                    });
+
                 }
-                btnUpperLeft.setDisable(true);
-                checkForWin([GridPane.getRowIndex(btnUpperLeft)][GridPane.getColumnIndex(btnUpperLeft)]);
             }
-        });
+        }
+        showMessageDialog(null, String.format("The %s won the game", game.winner.getClass()));
     }
 
-    public void startGame() {
+    private void startGame() {
         user = new User();
         computer = new Computer();
-        currentPlayer = user;
         game = Game.getInstance();
     }
 
-    public void checkForWin(String[][] playingField) {
+    private boolean checkForWinner() {
         int userRow = 0;
         int computerRow = 0;
 
         for (int row = 0; row < game.board.length; row++) {
             for (int col = 0; col < game.board[0].length; col++) {
                 if (userRow == 3) {
-                    showMessageDialog(null, "You won the game, Congratulations");
-                    break;
+                    game.winner = user;
+                    return true;
                 }else if (computerRow == 3) {
-                    showMessageDialog(null, "The computer won the game, better luck next time");
-                    break;
+                    game.winner = computer;
+                    return true;
                 }
 
                 if (game.board[row][col] == "X") {
-                  userRow++;
-                }else if (game.board[row][col] == "O") {
-                   computerRow++;
+                    userRow++;
+                } else if (game.board[row][col] == "O") {
+                    computerRow++;
                 }
             }
         }
+        return false;
     }
 }

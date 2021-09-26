@@ -2,7 +2,9 @@ package nl.inholland.javafx;
 
 public class User extends Player{
     @Override
-    public String writeTurn() {
-        return "X";
+    public String[][] setTurn(int row, int column) {
+        game.board[row][column] = "X";
+
+        return game.board;
     }
 }
