@@ -14,27 +14,42 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
-
     //region elements
     Label lblUsername = new Label("Username");
     Label lblPassword = new Label("Password");
-    Label lblVisiblePassword = new Label();
-
     TextField txtUsername = new TextField();
-        txtUsername.setPromptText("Enter username");
-
     PasswordField pfPassword = new PasswordField();
-        pfPassword.setPromptText("Enter password");
     Button btnLogin = new Button("Log in");
+    Label lblVisiblePassword = new Label();
+    GridPane gridPane = new GridPane();
     //endregion
+
+    @Override
+    public void start(Stage window) throws Exception {
+        loadWindow(window);
+
+        StringProperty pfPasswordProperty = pfPassword.textProperty();
+        pfPasswordProperty.addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                btnLogin.setVisible(lblVisiblePassword.getText().length() >= 8 /* && additional checks */);
+            }
+        });
+        lblVisiblePassword.textProperty().bind(pfPasswordProperty);
+    }
 
     //region initiate window
     private void loadWindow(Stage window) {
-        GridPane gridPane = new GridPane();
+        window.setHeight(200);
+        window.setWidth(300);
+        window.setTitle("Week 4 - Lesson 3 Exercise - Login Screen (Improved)");
+
         gridPane.setPadding(new Insets(10, 10, 10, 10));
         gridPane.setVgap(10); // Vertical spacing between grid items
         gridPane.setHgap(8); // Horizontal spacing between grid items
-        addGridPaneElements(window, gridPane);
+
+        styleNodes();
+        addToGrid();
 
         //Display UI elements (the gridpane) in scene + display window
         Scene scene = new Scene(gridPane);
@@ -42,43 +57,16 @@ public class App extends Application {
         window.show();
     }
 
+    private void styleNodes() {
+        txtUsername.setPromptText("Enter username");
+        pfPassword.setPromptText("Enter password");
 
-    //endregion
-
-    @Override
-    public void start(Stage window) throws Exception {
-        window.setHeight(200);
-        window.setWidth(300);
-        window.setTitle("Week 4 - Lesson 2 Exercise - Login Screen");
-        loadWindow(window);
+        btnLogin.getStyleClass().add("customButton");
+        btnLogin.setId("specialButton");
+        btnLogin.setVisible(false);
     }
 
-
-
-    private void addGridPaneElements(Stage window, GridPane gridPane) {
-
-        //Elements
-
-
-        //Store info/data
-        String username = txtUsername.getText();
-        String password = pfPassword.getText();
-
-        StringProperty pfPasswordProperty = pfPassword.textProperty();
-        lblVisiblePassword.textProperty().bind(pfPasswordProperty);
-
-        btnLogin.setVisible(false);
-
-        //FIXME: Button not appearing on met criteria
-        pfPasswordProperty.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
-                if (password.matches("^(?=.*[0-9])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8}$")) {
-                    btnLogin.setVisible(true);
-                }
-            }
-        });
-
+    private void addToGrid() {
         //Grid Assignment
         GridPane.setConstraints(lblUsername, 0, 0);
         GridPane.setConstraints(lblPassword, 0, 1);
@@ -86,6 +74,9 @@ public class App extends Application {
         GridPane.setConstraints(pfPassword, 1, 1);
         GridPane.setConstraints(btnLogin, 1, 2);
         GridPane.setConstraints(lblVisiblePassword, 0, 4);
-        gridPane.getChildren().addAll(lblUsername, lblPassword, txtUsername, pfPassword, btnLogin, lblVisiblePassword);
+
+        gridPane.getChildren().addAll(lblUsername, lblPassword, txtUsername,
+                pfPassword, btnLogin, lblVisiblePassword);
     }
+    //endregion
 }
