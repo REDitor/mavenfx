@@ -14,14 +14,21 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
 public class App extends Application {
-    @Override
-    public void start(Stage window) throws Exception {
-        window.setHeight(200);
-        window.setWidth(300);
-        window.setTitle("Week 4 - Lesson 2 Exercise - Login Screen");
-        loadWindow(window);
-    }
 
+    //region elements
+    Label lblUsername = new Label("Username");
+    Label lblPassword = new Label("Password");
+    Label lblVisiblePassword = new Label();
+
+    TextField txtUsername = new TextField();
+        txtUsername.setPromptText("Enter username");
+
+    PasswordField pfPassword = new PasswordField();
+        pfPassword.setPromptText("Enter password");
+    Button btnLogin = new Button("Log in");
+    //endregion
+
+    //region initiate window
     private void loadWindow(Stage window) {
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10, 10, 10, 10));
@@ -35,17 +42,23 @@ public class App extends Application {
         window.show();
     }
 
+
+    //endregion
+
+    @Override
+    public void start(Stage window) throws Exception {
+        window.setHeight(200);
+        window.setWidth(300);
+        window.setTitle("Week 4 - Lesson 2 Exercise - Login Screen");
+        loadWindow(window);
+    }
+
+
+
     private void addGridPaneElements(Stage window, GridPane gridPane) {
+
         //Elements
-        Label lblUsername = new Label("Username");
-        Label lblPassword = new Label("Password");
-        Label lblVisiblePassword = new Label();
 
-        TextField txtUsername = new TextField();
-        txtUsername.setPromptText("Enter username");
-
-        PasswordField pfPassword = new PasswordField();
-        pfPassword.setPromptText("Enter password");
 
         //Store info/data
         String username = txtUsername.getText();
@@ -54,7 +67,6 @@ public class App extends Application {
         StringProperty pfPasswordProperty = pfPassword.textProperty();
         lblVisiblePassword.textProperty().bind(pfPasswordProperty);
 
-        Button btnLogin = new Button("Log in");
         btnLogin.setVisible(false);
 
         //FIXME: Button not appearing on met criteria
