@@ -31,7 +31,7 @@ public class App extends Application {
     //region initiate window
     private void loadWindow(Stage window) {
         window.setHeight(200);
-        window.setWidth(300);
+        window.setWidth(260);
         window.setTitle("Login Screen (Improved)");
 
         gridPane.setPadding(new Insets(10, 10, 10, 10));
