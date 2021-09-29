@@ -17,14 +17,14 @@ import javafx.stage.Stage;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
-public class App extends Application {
+public class LoginWindow extends Application {
     //region elements
     Label lblUsername = new Label("Username");
     Label lblPassword = new Label("Password");
     TextField txtUsername = new TextField();
     PasswordField pfPassword = new PasswordField();
     Button btnLogin = new Button("Log in");
-    Label lblVisiblePassword = new Label();
+    Label lblErrorMessage = new Label("Wrong credentials, please try again...");
     GridPane gridPane = new GridPane();
     //endregion
 
@@ -50,7 +50,7 @@ public class App extends Application {
     private void styleNodes() {
         txtUsername.setPromptText("Enter username");
         pfPassword.setPromptText("Enter password");
-
+        lblErrorMessage.setVisible(false);
         btnLogin.setVisible(false);
     }
 
@@ -61,10 +61,10 @@ public class App extends Application {
         GridPane.setConstraints(txtUsername, 1, 0);
         GridPane.setConstraints(pfPassword, 1, 1);
         GridPane.setConstraints(btnLogin, 1, 2);
-        GridPane.setConstraints(lblVisiblePassword, 0, 4, 3, 1);
+        GridPane.setConstraints(lblErrorMessage, 0, 4, 3, 1);
 
         gridPane.getChildren().addAll(lblUsername, lblPassword, txtUsername,
-                pfPassword, btnLogin, lblVisiblePassword);
+                pfPassword, btnLogin, lblErrorMessage);
     }
     //endregion
 
@@ -76,15 +76,22 @@ public class App extends Application {
         pfPasswordProperty.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                btnLogin.setVisible(lblVisiblePassword.getText().matches("(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$"));
+                btnLogin.setVisible(pfPassword.getText().matches("(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$"));
             }
         });
-        lblVisiblePassword.textProperty().bind(pfPasswordProperty);
+//        lblVisiblePassword.textProperty().bind(pfPasswordProperty);
 
         btnLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                showMessageDialog(null, "You are now successfully logged in");
+                if (!txtUsername.getText().equalsIgnoreCase("SanderHarks") || !pfPassword.getText().equals("myPassword12*")) {
+                    lblErrorMessage.setVisible(true);
+                    txtUsername.clear();
+                    pfPassword.clear();
+                }else {
+                    MainWindow mainWindow = new MainWindow(txtUsername.getText());
+                    window.close();
+                }
             }
         });
     }
