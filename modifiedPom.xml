@@ -35,7 +35,7 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
       <version>${javafx.version}</version>
-      <classifier>mac</classifier>
+      <classifier>win</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -47,7 +47,7 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-base</artifactId>
       <version>${javafx.version}</version>
-      <classifier>mac</classifier>
+      <classifier>win</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
@@ -59,7 +59,7 @@
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-graphics</artifactId>
       <version>${javafx.version}</version>
-      <classifier>mac</classifier>
+      <classifier>win</classifier>
       <exclusions>
         <exclusion>
           <artifactId>*</artifactId>
