@@ -48,12 +48,12 @@ public class App extends Application {
 
                         //Computer turn
                         Random rng = new Random();
-                        int randomRow = rng.nextInt(3);
-                        int randomColumn = rng.nextInt(3);
+                        int randomRow = rng.nextInt(2);
+                        int randomColumn = rng.nextInt(2);
 
                         while (!checkTurn(randomRow, randomColumn)) {
-                            randomRow = rng.nextInt(3);
-                            randomColumn = rng.nextInt(3);
+                            randomRow = rng.nextInt(2); //2 or 3?
+                            randomColumn = rng.nextInt(2);
                         }
 
                         board[randomRow][randomColumn].setText("O");
@@ -107,25 +107,13 @@ public class App extends Application {
     private boolean checkForWinner() {
 
         //FIXME: crashes the application
-       int userScore = 0;
-       int computerScore = 0;
 
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board.length; col++) {
-                if (userScore == 3) {
-                    return true;
-                } else if (computerScore == 3) {
-                    return true;
-                }
-
-                if (board[row][col].getText() == "X") {
-                    userScore++;
-                } else if (board[row][col].getText() == "O") {
-                    computerScore++;
-                }
-            }
-        }
-        return false;
+//        if (board[0][0].getText().equals("X") && board[0][1].getText().equals("X") && board[0][2].getText().equals("X")
+//            || board[1][0].getText().equals("X") && board[1][1].getText().equals("X") && board[1][2].getText().equals("X")
+//            || board[2][0].getText().equals("X") && board[2][1].getText().equals("X") && board[2][2].getText().equals("X")) {
+//            return true;
+//        }
+//        return false;
     }
     //endregion
 }
