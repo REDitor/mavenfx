@@ -86,6 +86,7 @@ public class MainWindow {
 
         //create the scene and show the window
         Scene scene = new Scene(vBox);
+        scene.getStylesheets().add("resources/css/style.css");
         window.setScene(scene);
         window.show();
     }
