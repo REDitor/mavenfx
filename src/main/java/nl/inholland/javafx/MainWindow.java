@@ -12,8 +12,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import javax.print.attribute.standard.SheetCollate;
+
 public class MainWindow {
     private Stage window;
+    Scene scene;
+    Button addButton;
+    Button deleteButton;
 
     public MainWindow(String username) {
         Database db = new Database();
@@ -38,8 +43,8 @@ public class MainWindow {
         DatePicker birthdateInput = new DatePicker();
         birthdateInput.setPromptText("Birth date");
 
-        Button addButton = new Button("Add");
-        Button deleteButton = new Button("Delete");
+        addButton = new Button("Add");
+        deleteButton = new Button("Delete");
 
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(10));
@@ -85,9 +90,21 @@ public class MainWindow {
         });
 
         //create the scene and show the window
-        Scene scene = new Scene(vBox);
-        scene.getStylesheets().add("resources/css/style.css");
+        scene = new Scene(vBox);
+        styleWindow();
         window.setScene(scene);
         window.show();
+    }
+
+    private void styleWindow() {
+        scene.getStylesheets().add("resources/css/style.css");
+        addButton.getStylesheets().add("customButton");
+        deleteButton.setId("specialButton");
+
+        //inline-styling
+        addButton.setStyle(
+                        "-fx-background-color: slateblue;" +
+                        "-fx-text-fill: white;"
+        );
     }
 }

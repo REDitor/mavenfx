@@ -1,3 +1,17 @@
 .root {
     -fx-background-color: #A7C8F2;
 }
+
+.button {
+    -fx-text-fill: white;
+    -fx-background-color: #048ABF;
+}
+
+.customButton {
+    -fx-background-color: #F25116;
+}
+
+#specialButton {
+    -fx-font: bold 2pt "Arial";
+    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+}
