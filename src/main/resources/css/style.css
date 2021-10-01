@@ -1,17 +1,41 @@
+/*.root {*/
+/*    -fx-background-color: #A7C8F2;*/
+/*}*/
+
+/*.button {*/
+/*    -fx-text-fill: white;*/
+/*    -fx-background-color: #048ABF;*/
+/*}*/
+
+/*.customButton {*/
+/*    -fx-background-color: #F25116;*/
+/*}*/
+
+/*#specialButton {*/
+/*    -fx-font: bold 2pt "Arial";*/
+/*    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);*/
+/*}*/
+
 .root {
-    -fx-background-color: #A7C8F2;
+    -fx-background-color: #333;
+}
+
+#tableView {
+    -fx-text-fill: white;
+    -fx-background-color: #4b4b4b;
+}
+
+.text-field, .password-field {
+    -fx-background-color: black;
+    -fx-border: #4b4b4b;
+    -fx-text-fill: white;
 }
 
 .button {
     -fx-text-fill: white;
-    -fx-background-color: #048ABF;
+    -fx-background-color: #4b4b4b;
 }
 
-.customButton {
-    -fx-background-color: #F25116;
-}
-
-#specialButton {
-    -fx-font: bold 2pt "Arial";
-    -fx-effect: dropshadow(one-pass-box, black, 8, 0.0, 2, 0);
+#btnAdd {
+    -fx-background-color: #007ffd;
 }

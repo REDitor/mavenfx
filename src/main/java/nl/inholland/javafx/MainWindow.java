@@ -17,8 +17,11 @@ import javax.print.attribute.standard.SheetCollate;
 public class MainWindow {
     private Stage window;
     Scene scene;
+    TableView<Person> tableView;
     Button addButton;
     Button deleteButton;
+    TextField lastNameInput;
+    TextField firstNameInput;
 
     public MainWindow(String username) {
         Database db = new Database();
@@ -32,12 +35,12 @@ public class MainWindow {
         window.setTitle("People Manager - Logged in as: " + username);
 
         //add layout node and controls
-        TableView<Person> tableView = new TableView<>();
+        tableView = new TableView<>();
 
-        TextField firstNameInput = new TextField();
+        firstNameInput = new TextField();
         firstNameInput.setPromptText("First name");
 
-        TextField lastNameInput = new TextField();
+        lastNameInput = new TextField();
         lastNameInput.setPromptText("Last name");
 
         DatePicker birthdateInput = new DatePicker();
@@ -97,14 +100,15 @@ public class MainWindow {
     }
 
     private void styleWindow() {
+        //FIXME: Stylesheet not working
         scene.getStylesheets().add("resources/css/style.css");
-        addButton.getStylesheets().add("customButton");
-        deleteButton.setId("specialButton");
+        tableView.getStylesheets().add("tableView");
+        addButton.getStylesheets().add("btnAdd");
 
         //inline-styling
-        addButton.setStyle(
-                        "-fx-background-color: slateblue;" +
-                        "-fx-text-fill: white;"
-        );
+//        addButton.setStyle(
+//                        "-fx-background-color: slateblue;" +
+//                        "-fx-text-fill: white;"
+//        );
     }
 }
