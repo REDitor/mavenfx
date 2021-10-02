@@ -96,8 +96,8 @@ public class MainWindow {
 
         //create the scene and show the window
         scene = new Scene(vBox);
-        JMetro jMetro = new JMetro(Style.DARK);
-        jMetro.setScene(scene);
+//        JMetro jMetro = new JMetro(Style.DARK);
+//        jMetro.setScene(scene);
         styleWindow();
         window.setScene(scene);
         window.show();
@@ -105,7 +105,7 @@ public class MainWindow {
 
     private void styleWindow() {
         //FIXME: Stylesheet not working
-        scene.getStylesheets().add("resources/css/style.css");
+        scene.getStylesheets().add("css/style.css");
         tableView.getStylesheets().add("tableView");
         addButton.getStylesheets().add("btnAdd");
 
