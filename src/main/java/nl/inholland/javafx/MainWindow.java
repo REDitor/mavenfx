@@ -11,6 +11,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import javax.print.attribute.standard.SheetCollate;
 
@@ -94,6 +96,8 @@ public class MainWindow {
 
         //create the scene and show the window
         scene = new Scene(vBox);
+        JMetro jMetro = new JMetro(Style.DARK);
+        jMetro.setScene(scene);
         styleWindow();
         window.setScene(scene);
         window.show();
