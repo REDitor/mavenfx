@@ -2,8 +2,9 @@ package nl.inholland.javafx;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class App extends Application {
@@ -13,11 +14,25 @@ public class App extends Application {
         window.setWidth(800);
         window.setTitle("Dead Puppies");
 
-        BorderPane pane = new BorderPane();
-        Label hello = new Label("Hello World");
-        pane.setCenter(hello);
+        VBox vBox = new VBox();
+        MenuBar menuBar = new MenuBar();
 
-        Scene scene = new Scene(pane);
+        Menu fileMenu = new Menu("File");
+        MenuItem loadItem = new MenuItem("Load...");
+        MenuItem saveItem = new MenuItem("Save...");
+        fileMenu.getItems().addAll(loadItem, saveItem);
+
+        Menu aboutMenu = new Menu("About");
+        MenuItem aboutItem = new MenuItem("About");
+        aboutMenu.getItems().add(aboutItem);
+
+        TableView tableView = new TableView();
+
+        HBox hBox = new HBox();
+        TextField txtFeedTheDog = new TextField();
+        txtFeedTheDog.setPromptText("Feed the Dog");
+
+        Scene scene = new Scene();
         window.setScene(scene);
         window.show();
     }
