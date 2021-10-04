@@ -11,7 +11,7 @@ public class App extends Application {
     public void start(Stage window) throws Exception {
         window.setHeight(600);
         window.setWidth(800);
-        window.setTitle("Inholland JavaFX Starter Project");
+        window.setTitle("Dead Puppies");
 
         BorderPane pane = new BorderPane();
         Label hello = new Label("Hello World");
