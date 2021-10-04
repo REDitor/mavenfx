@@ -14,8 +14,6 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-import javax.print.attribute.standard.SheetCollate;
-
 public class MainWindow {
     private Stage window;
     Scene scene;
@@ -78,12 +76,17 @@ public class MainWindow {
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Person person = new Person(firstNameInput.getText(), lastNameInput.getText(), birthdateInput.getValue());
-                people.add(person);
 
-                firstNameInput.clear();
-                lastNameInput.clear();
-                birthdateInput.getEditor().clear();
+                if (firstNameInput.getText().length() > 0
+                && lastNameInput.getText().length() > 0
+                && birthdateInput.getEditor().getText().length() > 0) {
+                    Person person = new Person(firstNameInput.getText(), lastNameInput.getText(), birthdateInput.getValue());
+                    people.add(person);
+
+                    firstNameInput.clear();
+                    lastNameInput.clear();
+                    birthdateInput.getEditor().clear();
+                }
             }
         });
 
@@ -106,8 +109,8 @@ public class MainWindow {
     private void styleWindow() {
         //FIXME: Stylesheet not working
         scene.getStylesheets().add("css/style.css");
-        tableView.getStylesheets().add("tableView");
-        addButton.getStylesheets().add("btnAdd");
+        tableView.setId("tableView");
+        addButton.setId("btnAdd");
 
         //inline-styling
 //        addButton.setStyle(
