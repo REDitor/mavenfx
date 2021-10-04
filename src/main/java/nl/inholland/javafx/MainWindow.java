@@ -107,7 +107,6 @@ public class MainWindow {
     }
 
     private void styleWindow() {
-        //FIXME: Stylesheet not working
         scene.getStylesheets().add("css/style.css");
         tableView.setId("tableView");
         addButton.setId("btnAdd");
