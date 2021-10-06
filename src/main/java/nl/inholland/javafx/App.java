@@ -2,7 +2,6 @@ package nl.inholland.javafx;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,10 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.swing.plaf.InsetsUIResource;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class App extends Application {
     @Override
@@ -44,6 +40,10 @@ public class App extends Application {
 
         //Tableview
         TableView tableView = new TableView();
+        TableColumn description = new TableColumn("To Do:");
+        TableColumn status = new TableColumn("Status");
+        tableView.getColumns().addAll(description, status);
+
         ObservableList<ToDoItem> toDoList = tableView.getItems();
 
         //HBox
@@ -62,10 +62,10 @@ public class App extends Application {
         btnAdd.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                toDoList.add(new ToDoItem(
-                        txtTask.getText(),
-                        false
-                ));
+                ToDoItem toDoItem = new ToDoItem(txtTask.getText(), false);
+                toDoList.add(toDoItem);
+                tableView.setItems(toDoList);
+                txtTask.clear();
             }
         });
 
