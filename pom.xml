@@ -47,7 +47,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <javafx.version>17</javafx.version>
         <javafx-maven-plugin.version>0.0.7</javafx-maven-plugin.version>
-        <mavenfx.mainClass>nl.inholland.javafx.App</mavenfx.mainClass>
+        <mavenfx.mainClass>nl.inholland.javafx.Login</mavenfx.mainClass>
     </properties>
 
     <dependencies>
