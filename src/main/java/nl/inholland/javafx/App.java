@@ -2,7 +2,7 @@ package nl.inholland.javafx;
 
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,16 +12,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.swing.plaf.InsetsUIResource;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class App extends Application {
     @Override
     public void start(Stage window) throws Exception {
         window.setHeight(600);
-        window.setWidth(300);
+        window.setWidth(320);
         window.setTitle("Dead Puppies");
 
         //region VBox
