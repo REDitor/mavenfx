@@ -15,6 +15,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -31,9 +32,9 @@ import java.io.ObjectOutputStream;
 public class App extends Application {
     @Override
     public void start(Stage window) throws Exception {
-        window.setHeight(600);
-        window.setWidth(350);
-        window.setTitle("Dead Puppies");
+        window.setHeight(800);
+        window.setWidth(320);
+        window.setTitle("Dead Puppies :'(");
 
         //region VBox
         VBox vBox = new VBox();
@@ -55,15 +56,24 @@ public class App extends Application {
 
         //Tableview
         TableView tableView = new TableView();
-        TableColumn description = new TableColumn("To Do:");
-        TableColumn status = new TableColumn("Status");
-        tableView.getColumns().addAll(description, status);
+        tableView.setPrefHeight(750);
+
+        TableColumn<ToDoItem, String> colDescription = new TableColumn<>("Description");
+        colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+        colDescription.setPrefWidth(200);
+
+        TableColumn<ToDoItem, String> colStatus = new TableColumn<>("Completed");
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("complete"));
+        colStatus.setPrefWidth(100);
+
+        tableView.getColumns().addAll(colDescription, colStatus);
 
         ObservableList<ToDoItem> toDoList = tableView.getItems();
 
         //HBox
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(10));
+        hBox.setSpacing(10);
 
         TextField txtTask = new TextField();
         txtTask.setPromptText("Enter a To Do Item");
@@ -84,7 +94,6 @@ public class App extends Application {
             public void handle(ActionEvent actionEvent) {
                 ToDoItem toDoItem = new ToDoItem(txtTask.getText(), false);
                 toDoList.add(toDoItem);
-                showItems(toDoList, tableView);
                 txtTask.clear();
             }
         });
@@ -121,7 +130,6 @@ public class App extends Application {
                         try {
                             ToDoItem item = (ToDoItem) ois.readObject();
                             toDoList.add(item);
-                            showItems(toDoList, tableView);
                         } catch (EOFException eofe) {
                             break;
                         }
@@ -157,11 +165,5 @@ public class App extends Application {
         Scene scene = new Scene(vBox);
         window.setScene(scene);
         window.show();
-    }
-
-    private void showItems(ObservableList<ToDoItem> toDoList, TableView tableView) {
-        for (ToDoItem item : toDoList) {
-            tableView.getItems().add(item);
-        }
     }
 }
