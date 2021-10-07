@@ -6,23 +6,38 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
 public class App extends Application {
     @Override
     public void start(Stage window) throws Exception {
         window.setHeight(600);
-        window.setWidth(300);
+        window.setWidth(350);
         window.setTitle("Dead Puppies");
 
         //region VBox
         VBox vBox = new VBox();
-        vBox.setPadding(new Insets(0));
+        vBox.setPadding(new Insets(10));
 
         //Menu
         MenuBar menuBar = new MenuBar();
@@ -48,6 +63,7 @@ public class App extends Application {
 
         //HBox
         HBox hBox = new HBox();
+        hBox.setPadding(new Insets(10));
 
         TextField txtTask = new TextField();
         txtTask.setPromptText("Enter a To Do Item");
@@ -55,7 +71,11 @@ public class App extends Application {
 
         hBox.getChildren().addAll(txtTask, btnAdd);
 
-        vBox.getChildren().addAll(menuBar, tableView, hBox);
+        Label errorLabel = new Label();
+        errorLabel.setStyle("-fx-text-fill: #ff0000");
+
+        vBox.getChildren().addAll(menuBar, tableView, hBox, errorLabel);
+
         //endregion
 
         //region Event Handlers
@@ -64,7 +84,7 @@ public class App extends Application {
             public void handle(ActionEvent actionEvent) {
                 ToDoItem toDoItem = new ToDoItem(txtTask.getText(), false);
                 toDoList.add(toDoItem);
-                tableView.setItems(toDoList);
+                showItems(toDoList, tableView);
                 txtTask.clear();
             }
         });
@@ -96,19 +116,25 @@ public class App extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
                 //Reading the list from file
-                try (ObjectInputStream ois = new ObjectInputStream(
-                        new FileInputStream(new File("items.dat")))) {
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(new File("items.dat")))) {
                     while (true) {
                         try {
                             ToDoItem item = (ToDoItem) ois.readObject();
                             toDoList.add(item);
-                        }catch (EOFException eofe) {
+                            showItems(toDoList, tableView);
+                        } catch (EOFException eofe) {
                             break;
                         }
                     }
-                }catch (FileNotFoundException fnfe) {}
-                catch (ClassNotFoundException cnfe) {}
-                catch (IOException ioe) {}
+                } catch (FileNotFoundException fnfe) {
+                    errorLabel.setText("File not found.");
+                }
+                catch (ClassNotFoundException cnfe) {
+                    errorLabel.setText("Class not found");
+                }
+                catch (IOException ie) {
+                    errorLabel.setText("Failed to retrieve data");
+                }
             }
         });
 
@@ -121,7 +147,7 @@ public class App extends Application {
                     for (ToDoItem item : toDoList) {
                         oos.writeObject(item);
                     }
-                }catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -131,5 +157,11 @@ public class App extends Application {
         Scene scene = new Scene(vBox);
         window.setScene(scene);
         window.show();
+    }
+
+    private void showItems(ObservableList<ToDoItem> toDoList, TableView tableView) {
+        for (ToDoItem item : toDoList) {
+            tableView.getItems().add(item);
+        }
     }
 }
