@@ -14,5 +14,5 @@ public class Database {
     public void addShowing(MovieShowing showing) { showings.add(showing); }
 
     public List<Movie> getMovies() { return movies; }
-    public List<Movie> addMovie(Movie movie) { movies.add(movie); }
+    public void addMovie(Movie movie) { movies.add(movie); }
 }
