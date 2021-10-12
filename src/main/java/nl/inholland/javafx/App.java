@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,8 +14,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Models.Users.User;
 
 public class App extends Application {
+    Database db = new Database();
     //region Elements
     Scene scene;
     GridPane gridPane = new GridPane();
@@ -36,12 +41,14 @@ public class App extends Application {
         gridPane.setVgap(10);
         gridPane.setHgap(10);
 
+        //initialize scene
+        scene = new Scene(gridPane);
+
         //Style + grid assignment
         styleWindow();
         assignGrid();
 
         //Display elements, scene and window
-        scene = new Scene(gridPane);
         window.setScene(scene);
         window.show();
     }
@@ -67,7 +74,7 @@ public class App extends Application {
         GridPane.setConstraints(lblErrorMessage, 0, 4, 3, 1);
 
         gridPane.getChildren().addAll(lblUsername, txtUsername, lblPassword,
-                                        pwfPassword, btnLogin, lblErrorMessage);
+                pwfPassword, btnLogin, lblErrorMessage);
     }
     //endregion
 
@@ -79,7 +86,15 @@ public class App extends Application {
         pwfPasswordProperty.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                btnLogin.setVisible(pwfPassword.getText().matches("(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$"));
+            }
+        });
 
+        btnLogin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+
+                if ()
             }
         });
     }

@@ -5,6 +5,9 @@ import nl.inholland.javafx.Models.Theatre.MovieShowing;
 import nl.inholland.javafx.Models.Theatre.Room;
 import nl.inholland.javafx.Models.Users.User;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +24,14 @@ public class Database {
     public List<Movie> getMovies() { return movies; }
     public void addMovie(Movie movie) { movies.add(movie); }
 
+    public List<User> getUsers() { return users; }
+
+    public Room getRoom1() { return room1; }
+    public Room getRoom2() { return room2; }
+
     public Database() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        showings.add(new MovieShowing(LocalDateTime.of(2021, Month.OCTOBER, 9, 20, 0)), );
         //TODO: add showings, movies, users, rooms
     }
 }
