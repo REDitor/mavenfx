@@ -1,3 +1,13 @@
 .Root {
-    -fx-background-color: #19295e;
+    -fx-background-color: #333;
 }
+
+.button {
+    -fx-background-color: #19295e;
+    -fx-text-fill: #fff;
+}
+
+.label {
+    -fx-text-fill: #fff;
+}
+

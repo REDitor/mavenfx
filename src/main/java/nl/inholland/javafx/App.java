@@ -1,6 +1,9 @@
 package nl.inholland.javafx;
 
 import javafx.application.Application;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,12 +28,10 @@ public class App extends Application {
 
     //region Initiate Window
     private void loadWindow(Stage window) {
-        //Basic window shape
         window.setHeight(200);
         window.setWidth(260);
         window.setTitle("Fabulous Cinema -- Login");
 
-        //gridpane spacing
         gridPane.setPadding(new Insets(10));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
@@ -54,7 +55,7 @@ public class App extends Application {
 
         //css
         scene.getStylesheets().add("css/style.css");
-
+        lblErrorMessage.setStyle("-fx-text-fill: red");
     }
 
     private void assignGrid() {
@@ -74,5 +75,12 @@ public class App extends Application {
     public void start(Stage window) throws Exception {
         loadWindow(window);
 
+        StringProperty pwfPasswordProperty = pwfPassword.textProperty();
+        pwfPasswordProperty.addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+
+            }
+        });
     }
 }
