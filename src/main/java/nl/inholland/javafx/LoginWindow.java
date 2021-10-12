@@ -20,9 +20,17 @@ import nl.inholland.javafx.UI.MainWindow;
 
 import java.util.List;
 
-public class App extends Application {
-    Database db = new Database();
+public class LoginWindow extends Application {
+    Database db;
     User loggingUser;
+
+    public LoginWindow(Database db) {
+        if (db != null) {
+            this.db = db;
+        }else {
+            this.db = new Database();
+        }
+    }
 
     //region Elements
     Scene scene;
@@ -108,13 +116,10 @@ public class App extends Application {
                         //check for correct password
                         if (pwfPassword.getText() == user.getPassword()) {
                             MainWindow mainWindow = new MainWindow(db, loggingUser);
-                            mainWindow
+                            window.close();
                         }
                     }
                 }
-                //TODO: Check if credentials are correct
-
-
             }
         });
     }
