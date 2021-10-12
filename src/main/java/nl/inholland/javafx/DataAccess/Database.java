@@ -31,7 +31,11 @@ public class Database {
 
     public Database() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
-        showings.add(new MovieShowing(LocalDateTime.of(2021, Month.OCTOBER, 9, 20, 0)), );
+        showings.add(
+                new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), ));
+
+
+
         //TODO: add showings, movies, users, rooms
     }
 }

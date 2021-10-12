@@ -16,9 +16,14 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import nl.inholland.javafx.DataAccess.Database;
 import nl.inholland.javafx.Models.Users.User;
+import nl.inholland.javafx.UI.MainWindow;
+
+import java.util.List;
 
 public class App extends Application {
     Database db = new Database();
+    User loggingUser;
+
     //region Elements
     Scene scene;
     GridPane gridPane = new GridPane();
@@ -28,7 +33,7 @@ public class App extends Application {
     Label lblPassword = new Label("Password");
     PasswordField pwfPassword = new PasswordField();
     Button btnLogin = new Button("Log in");
-    Label lblErrorMessage = new Label("Wrong credentials, please try again...");
+    Label lblErrorMessage = new Label();
     //endregion
 
     //region Initiate Window
@@ -94,7 +99,22 @@ public class App extends Application {
             @Override
             public void handle(ActionEvent actionEvent) {
 
-                if ()
+                //TODO: Check if user exists in database
+                List<User> dbUsers = db.getUsers();
+
+                for (User user : dbUsers) {
+                    //check if user exists in database
+                    if (txtUsername.getText() == user.getUsername()) {
+                        //check for correct password
+                        if (pwfPassword.getText() == user.getPassword()) {
+                            MainWindow mainWindow = new MainWindow(db, loggingUser);
+                            mainWindow
+                        }
+                    }
+                }
+                //TODO: Check if credentials are correct
+
+
             }
         });
     }

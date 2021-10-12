@@ -9,11 +9,11 @@ public class MovieShowing {
     private int availableTickets;
     private Room room;
 
-    public LocalDateTime getEndTime( return startTime + movie.getDuration());
+    public LocalDateTime getEndTime() { return endTime; }
 
-    public MovieShowing(LocalDateTime startTime, LocalDateTime endTime, Movie movie, int availableTickets, Room room) {
+    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
         this.startTime = startTime;
-        this.endTime = endTime;
+        this.endTime = startTime.plusMinutes(movie.getDuration().toMinutes());
         this.movie = movie;
         this.availableTickets = availableTickets;
         this.room = room;
