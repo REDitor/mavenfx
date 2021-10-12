@@ -5,6 +5,7 @@ import nl.inholland.javafx.Models.Theatre.MovieShowing;
 import nl.inholland.javafx.Models.Theatre.Room;
 import nl.inholland.javafx.Models.Users.User;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -31,8 +32,9 @@ public class Database {
 
     public Database() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+        //TODO: find way to use duration OR find alternative to Duration type
         showings.add(
-                new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), ));
+                new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), new Movie("No time to lie", 12.00, Duration.ofMinutes())));
 
 
 
