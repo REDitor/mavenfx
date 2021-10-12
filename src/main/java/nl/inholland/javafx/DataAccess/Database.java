@@ -20,4 +20,8 @@ public class Database {
 
     public List<Movie> getMovies() { return movies; }
     public void addMovie(Movie movie) { movies.add(movie); }
+
+    public Database() {
+        //TODO: add showings, movies, users, rooms
+    }
 }
