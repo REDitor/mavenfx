@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 
 public class App extends Application {
     //region Elements
+    Scene scene;
     GridPane gridPane = new GridPane();
 
     Label lblUsername = new Label("Username");
@@ -35,20 +36,24 @@ public class App extends Application {
         gridPane.setHgap(10);
 
         //Style + grid assignment
-        styleNodes();
+        styleWindow();
         assignGrid();
 
         //Display elements, scene and window
-        Scene scene = new Scene(gridPane);
+        scene = new Scene(gridPane);
         window.setScene(scene);
         window.show();
     }
 
-    private void styleNodes() {
+    private void styleWindow() {
+        //basic startup styling
         txtUsername.setPromptText("Enter username");
         pwfPassword.setPromptText("Enter password");
         lblErrorMessage.setVisible(false);
         btnLogin.setVisible(false);
+
+        //css
+        scene.getStylesheets().add("css/style.css");
 
     }
 
