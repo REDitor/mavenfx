@@ -95,6 +95,14 @@ public class LoginWindow extends Application {
     public void start(Stage window) throws Exception {
         loadWindow(window);
 
+        StringProperty txtUsernameProperty = txtUsername.textProperty();
+        txtUsernameProperty.addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                lblErrorMessage.setVisible(false);
+            }
+        });
+
         StringProperty pwfPasswordProperty = pwfPassword.textProperty();
         pwfPasswordProperty.addListener(new ChangeListener<String>() {
             @Override
@@ -106,8 +114,6 @@ public class LoginWindow extends Application {
         btnLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-
-                //TODO: Check if user exists in database
                 List<User> dbUsers = db.getUsers();
 
                 for (User user : dbUsers) {
@@ -117,9 +123,17 @@ public class LoginWindow extends Application {
                         if (pwfPassword.getText() == user.getPassword()) {
                             MainWindow mainWindow = new MainWindow(db, loggingUser);
                             window.close();
+                        }else {
+                            lblErrorMessage.setText("Incorrect Password...");
+                            lblErrorMessage.setVisible(true);
+                            pwfPassword.clear();
                         }
                     }
                 }
+                lblErrorMessage.setText("User not found");
+                lblErrorMessage.setVisible(true);
+                txtUsername.clear();
+                pwfPassword.clear();
             }
         });
     }

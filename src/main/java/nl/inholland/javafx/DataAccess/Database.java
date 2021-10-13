@@ -3,6 +3,7 @@ package nl.inholland.javafx.DataAccess;
 import nl.inholland.javafx.Models.Theatre.Movie;
 import nl.inholland.javafx.Models.Theatre.MovieShowing;
 import nl.inholland.javafx.Models.Theatre.Room;
+import nl.inholland.javafx.Models.Users.Admin;
 import nl.inholland.javafx.Models.Users.User;
 
 import java.time.Duration;
@@ -36,7 +37,15 @@ public class Database {
         showings.add(
                 new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), new Movie("No time to lie", 12.00, Duration.ofMinutes())));
 
+        movies.add();
 
+        users.add(
+                new Admin("Sander", "myPassword12*"),
+                new User("Billy", "myPassword13*")
+        );
+
+        room1.addShowing();
+        room2.addShowing();
 
         //TODO: add showings, movies, users, rooms
     }
