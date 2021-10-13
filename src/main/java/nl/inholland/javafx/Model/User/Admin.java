@@ -1,4 +1,4 @@
-package nl.inholland.javafx.Models.Users;
+package nl.inholland.javafx.Model.User;
 
 public class Admin extends User {
     public Admin(String username, String password) {

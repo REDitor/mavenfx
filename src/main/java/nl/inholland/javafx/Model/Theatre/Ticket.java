@@ -1,4 +1,4 @@
-package nl.inholland.javafx.Models.Theatre;
+package nl.inholland.javafx.Model.Theatre;
 
 public class Ticket {
     private MovieShowing showing;

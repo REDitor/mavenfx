@@ -15,7 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import nl.inholland.javafx.DataAccess.Database;
-import nl.inholland.javafx.Models.Users.User;
+import nl.inholland.javafx.Model.User.User;
 import nl.inholland.javafx.UI.MainWindow;
 
 import java.util.List;

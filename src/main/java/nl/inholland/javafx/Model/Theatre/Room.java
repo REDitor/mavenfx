@@ -1,4 +1,4 @@
-package nl.inholland.javafx.Models.Theatre;
+package nl.inholland.javafx.Model.Theatre;
 
 import java.time.Duration;
 import java.util.ArrayList;

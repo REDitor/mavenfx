@@ -1,14 +1,13 @@
 package nl.inholland.javafx.DataAccess;
 
-import nl.inholland.javafx.Models.Theatre.Movie;
-import nl.inholland.javafx.Models.Theatre.MovieShowing;
-import nl.inholland.javafx.Models.Theatre.Room;
-import nl.inholland.javafx.Models.Users.Admin;
-import nl.inholland.javafx.Models.Users.User;
+import nl.inholland.javafx.Model.Theatre.Movie;
+import nl.inholland.javafx.Model.Theatre.MovieShowing;
+import nl.inholland.javafx.Model.Theatre.Room;
+import nl.inholland.javafx.Model.User.Admin;
+import nl.inholland.javafx.Model.User.User;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,22 +30,23 @@ public class Database {
     public Room getRoom1() { return room1; }
     public Room getRoom2() { return room2; }
 
+    //TODO: Add .csv reading and writing
+
     public Database() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
         //TODO: find way to use duration OR find alternative to Duration type
-        showings.add(
-                new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), new Movie("No time to lie", 12.00, Duration.ofMinutes())));
+        //showings.addAll(movies)?
+        showings.add(new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), new Movie("No time to lie", 12.00, Duration.ofMinutes())));
 
-        movies.add();
+        movies.add(new Movie("No time to lie", 12.00, Duration.ofMinutes(125)));
+        movies.add(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(92)));
 
-        users.add(
-                new Admin("Sander", "myPassword12*"),
-                new User("Billy", "myPassword13*")
-        );
+        users.add(new Admin("Sander", "myPassword12*"));
+        users.add(new Admin("Wimmelstein", "myPassword13*"));
+        users.add(new User("Billy", "myPassword14*"));
+        users.add(new User("Daniel", "myPassword15*"));
 
-        room1.addShowing();
-        room2.addShowing();
-
-        //TODO: add showings, movies, users, rooms
+        room1.getShowings().add();
+        room2.getShowings();
     }
 }

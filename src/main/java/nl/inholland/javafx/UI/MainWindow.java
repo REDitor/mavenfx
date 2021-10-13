@@ -6,7 +6,8 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
 import nl.inholland.javafx.DataAccess.Database;
-import nl.inholland.javafx.Models.Users.User;
+import nl.inholland.javafx.Model.User.Permission;
+import nl.inholland.javafx.Model.User.User;
 
 public class MainWindow {
     Database db;
@@ -17,19 +18,16 @@ public class MainWindow {
 
     //Menu
     MenuBar menuBar = new MenuBar();
-
-    Menu helpMenu = new Menu("Help");
-    MenuItem dashItem = new MenuItem("-");
-    MenuItem aboutItem = new MenuItem("About");
-
-    Menu adminMenu = new Menu("Admin");
-    MenuItem adminDashItem = new MenuItem("-");
-    MenuItem manageShowingsItem = new MenuItem("Manage Showings");
-    MenuItem manageMoviesItem = new MenuItem("Manage Movies");
-
-    Menu logoutMenu = new Menu("Logout");
-    MenuItem logoutDashItem = new MenuItem("-");
-    MenuItem logoutItem = new MenuItem("Logout...");
+    Menu helpMenu;
+    MenuItem dashItem;
+    MenuItem aboutItem;
+    Menu adminMenu;
+    MenuItem adminDashItem;
+    MenuItem manageShowingsItem;
+    MenuItem manageMoviesItem;
+    Menu logoutMenu;
+    MenuItem logoutDashItem;
+    MenuItem logoutItem;
     //endregion
 
     public MainWindow(Database db, User loggedUser) {
@@ -40,6 +38,7 @@ public class MainWindow {
         loadWindow(window);
     }
 
+    //region Initiate Window
     private void loadWindow(Stage window) {
         window.setHeight(200);
         window.setWidth(260);
@@ -47,6 +46,9 @@ public class MainWindow {
 
         //initialize scene
         scene = new Scene();
+
+        //Create elements based on user permission
+        instantiateElements(loggedUser);
 
         //Style + grid assignment
         styleWindow();
@@ -57,6 +59,25 @@ public class MainWindow {
         window.show();
     }
 
+    private void instantiateElements(User loggedUser) {
+        menuBar = new MenuBar();
+
+        helpMenu = new Menu("Help");
+        dashItem = new MenuItem("-");
+        aboutItem = new MenuItem("About");
+
+        if (loggedUser.getPermission() == Permission.Admin) {
+            adminMenu = new Menu("Admin");
+            adminDashItem = new MenuItem("-");
+            manageShowingsItem = new MenuItem("Manage Showings");
+            manageMoviesItem = new MenuItem("Manage Movies");
+        }
+
+        logoutMenu = new Menu("Logout");
+        logoutDashItem = new MenuItem("-");
+        logoutItem = new MenuItem("Logout...");
+    }
+
     private void styleWindow() {
 
     }
@@ -64,4 +85,6 @@ public class MainWindow {
     private void assignGrid() {
 
     }
+    //endregion
+
 }
