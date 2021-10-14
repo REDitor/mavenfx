@@ -8,6 +8,7 @@ public class Movie {
     private Duration duration;
 
     public Duration getDuration() { return duration; }
+    public String getTitle() { return title; }
 
     public Movie(String title, double price, Duration duration) {
         this.title = title;

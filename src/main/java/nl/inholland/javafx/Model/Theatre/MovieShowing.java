@@ -7,15 +7,15 @@ public class MovieShowing {
     private LocalDateTime endTime;
     private Movie movie;
     private int availableTickets;
-    private Room room;
+    private int roomNumber;
 
     public LocalDateTime getEndTime() { return endTime; }
 
-    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
+    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, int roomNumber) {
         this.startTime = startTime;
         this.endTime = startTime.plusMinutes(movie.getDuration().toMinutes());
         this.movie = movie;
         this.availableTickets = availableTickets;
-        this.room = room;
+        this.roomNumber = roomNumber;
     }
 }
