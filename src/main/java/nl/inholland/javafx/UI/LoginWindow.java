@@ -1,6 +1,5 @@
 package nl.inholland.javafx.UI;
 
-import javafx.application.Application;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
