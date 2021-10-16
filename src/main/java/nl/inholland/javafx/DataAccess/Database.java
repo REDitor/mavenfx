@@ -26,56 +26,16 @@ public class Database {
     private Room room1;
     private Room room2;
 
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public List<Movie> getMovies() {
-        return movies;
-    }
-
-    public void addMovie(Movie movie) {
-        movies.add(movie);
-    }
-
-    public List<MovieShowing> getShowings() {
-        return showings;
-    }
-
-    public void addShowing(MovieShowing showing) {
-        showings.add(showing);
-    }
-
-    public Room getRoom1() {
-        return room1;
-    }
-
-    public Room getRoom2() {
-        return room2;
-    }
-
-    //TODO: Add .csv reading and writing
-
     public Database() {
-        //TODO: find way to use duration OR find alternative to Duration type
-
         users = new ArrayList<>();
         movies = new ArrayList<>();
         showings = new ArrayList<>();
-        room1 = new Room(1);
-        room2 = new Room(2);
-//        movies.add(new Movie("No time to lie", 12.00, Duration.ofMinutes(125)));
-//        movies.add(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(92)));
-//
-//        //showings.addAll(movies)?
-//        showings.add(new MovieShowing(formatter.format(LocalDateTime.of(2021, 10, 9, 20, 0)), new Movie("No time to lie", 12.00, Duration.ofMinutes())));
-//
-//
-//        room1.getShowings().add();
-//        room2.getShowings();
+        room1 = new Room(1, 200);
+        room2 = new Room(2, 100);
     }
 
-    public List<User> readUsers() {
+    //region Read
+    public List<User> getUsers() {
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "users.csv")));
             for (String line : strings) {
@@ -99,13 +59,13 @@ public class Database {
         } catch (FileNotFoundException fnfe) {
             //TODO: implement throwing
         } catch (IOException ioe) {
-            //TODO: implement throwing
+            //...
         }
 
         return users;
     }
 
-    public List<Movie> readMovies() {
+    public List<Movie> getMovies() {
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "movies.csv")));
             for (String line : strings) {
@@ -118,15 +78,15 @@ public class Database {
                 );
             }
         } catch (FileNotFoundException fnfe) {
-            //....
+            //
         } catch (IOException ioe) {
-            //....
+            //.....
         }
 
         return movies;
     }
 
-    public List<MovieShowing> readShowings() {
+    public List<MovieShowing> getShowings() {
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "showings.csv")));
             for (String line : strings) {
@@ -149,12 +109,27 @@ public class Database {
         } catch (FileNotFoundException fnfe) {
             //......
         } catch (IOException ioe) {
-
+            //
         }
         return showings;
     }
+    //endregion
 
-    public String exceptionMessage(String message) {
-        return message;
+    //region Write
+    public void addMovie(Movie movie) {
+        try {
+
+        } catch () {
+
+        }
     }
+
+    public void addShowing(MovieShowing showing) {
+        try {
+
+        } catch () {
+
+        }
+    }
+    //endregion
 }

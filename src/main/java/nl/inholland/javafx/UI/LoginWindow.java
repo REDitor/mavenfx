@@ -103,7 +103,7 @@ public class LoginWindow {
         btnLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                List<User> dbUsers = db.readUsers();
+                List<User> dbUsers = db.getUsers();
 
                 for (User user : dbUsers) {
                     //check if user exists in database

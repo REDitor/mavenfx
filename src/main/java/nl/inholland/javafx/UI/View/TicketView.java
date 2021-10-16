@@ -1,5 +1,6 @@
 package nl.inholland.javafx.UI.View;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -7,13 +8,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Ticket;
-import nl.inholland.javafx.Model.User.User;
 
 import java.time.LocalDateTime;
 
 public class TicketView {
-    Database db;
+    private Database db;
 
     public TicketView(Database db) {
         this.db = db;
@@ -22,7 +23,7 @@ public class TicketView {
     }
 
     private void setEventHandlers() {
-
+        ObservableList<MovieShowing>
     }
 
     public HBox getView() {
