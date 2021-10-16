@@ -11,3 +11,7 @@
     -fx-text-fill: #fff;
 }
 
+#gridPane {
+    -fx-background-color: #333;
+}
+

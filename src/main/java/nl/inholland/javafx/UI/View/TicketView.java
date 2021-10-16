@@ -14,11 +14,9 @@ import java.time.LocalDateTime;
 
 public class TicketView {
     Database db;
-    User loggedUser;
 
-    public TicketView(Database db, User loggedUser) {
+    public TicketView(Database db) {
         this.db = db;
-        this.loggedUser = loggedUser;
     }
 
     public HBox getView() {

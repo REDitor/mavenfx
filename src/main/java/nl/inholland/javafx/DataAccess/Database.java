@@ -4,22 +4,17 @@ import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.Admin;
-import nl.inholland.javafx.Model.User.Permission;
 import nl.inholland.javafx.Model.User.User;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import static javafx.scene.input.KeyCode.L;
 
 public class Database {
     private static final String PATH = "src/main/resources/%s";
@@ -80,7 +75,7 @@ public class Database {
 //        room2.getShowings();
     }
 
-    private List<User> readUsers() {
+    public List<User> readUsers() {
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "users.csv")));
             for (String line : strings) {

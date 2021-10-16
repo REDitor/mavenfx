@@ -19,25 +19,9 @@ import nl.inholland.javafx.Model.User.User;
 import nl.inholland.javafx.UI.MainWindow;
 
 import java.util.List;
-import java.util.Objects;
 
 public class LoginWindow extends Application {
     Database db;
-
-    public LoginWindow(Database db) {
-        //Option 1
-        if (db != null) {
-            this.db = db;
-        } else {
-            this.db = new Database();
-        }
-
-        //Option 2
-        this.db = Objects.requireNonNullElseGet(db, Database::new);
-    }
-
-//    public LoginWindow() {}
-
 
     //region Elements
     Scene scene;
@@ -82,6 +66,7 @@ public class LoginWindow extends Application {
 
         //css
         scene.getStylesheets().add("css/style.css");
+        gridPane.setId("gridPane");
         lblErrorMessage.setStyle("-fx-text-fill: red");
     }
 
@@ -91,7 +76,7 @@ public class LoginWindow extends Application {
         GridPane.setConstraints(lblPassword, 0, 1);
         GridPane.setConstraints(pwfPassword, 1, 1);
         GridPane.setConstraints(btnLogin, 1, 2);
-        GridPane.setConstraints(lblErrorMessage, 0, 4, 3, 1);
+        GridPane.setConstraints(lblErrorMessage, 0, 3, 1, 3);
 
         gridPane.getChildren().addAll(lblUsername, txtUsername, lblPassword,
                 pwfPassword, btnLogin, lblErrorMessage);
@@ -121,7 +106,7 @@ public class LoginWindow extends Application {
         btnLogin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                List<User> dbUsers = db.getUsers();
+                List<User> dbUsers = db.readUsers();
 
                 for (User user : dbUsers) {
                     //check if user exists in database
