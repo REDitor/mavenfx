@@ -17,4 +17,6 @@ public class Room {
 
     public ArrayList<MovieShowing> getShowings() { return showings; }
     public void addShowing(MovieShowing showing) { showings.add(showing); }
+
+    public int getNumberOfSeats() { return numberOfSeats; }
 }

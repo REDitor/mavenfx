@@ -19,18 +19,25 @@ import nl.inholland.javafx.Model.User.User;
 import nl.inholland.javafx.UI.MainWindow;
 
 import java.util.List;
+import java.util.Objects;
 
 public class LoginWindow extends Application {
     Database db;
-    User loggingUser;
 
     public LoginWindow(Database db) {
+        //Option 1
         if (db != null) {
             this.db = db;
-        }else {
+        } else {
             this.db = new Database();
         }
+
+        //Option 2
+        this.db = Objects.requireNonNullElseGet(db, Database::new);
     }
+
+//    public LoginWindow() {}
+
 
     //region Elements
     Scene scene;
@@ -118,10 +125,10 @@ public class LoginWindow extends Application {
 
                 for (User user : dbUsers) {
                     //check if user exists in database
-                    if (txtUsername.getText() == user.getUsername()) {
+                    if (txtUsername.getText().equals(user.getUsername())) {
                         //check for correct password
-                        if (pwfPassword.getText() == user.getPassword()) {
-                            MainWindow mainWindow = new MainWindow(db, loggingUser);
+                        if (pwfPassword.getText().equals(user.getPassword())) {
+                            MainWindow mainWindow = new MainWindow(db, user);
                             window.close();
                         }else {
                             lblErrorMessage.setText("Incorrect Password...");

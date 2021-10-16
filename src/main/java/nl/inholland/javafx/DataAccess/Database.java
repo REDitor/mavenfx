@@ -23,7 +23,7 @@ import static javafx.scene.input.KeyCode.L;
 
 public class Database {
     private static final String PATH = "src/main/resources/%s";
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
 
     private List<User> users;
     private List<Movie> movies;
@@ -144,8 +144,7 @@ public class Database {
 
                 showings.add(
                         new MovieShowing(
-                                dateFormat.parse(line.split(",")[0]),
-                                dateFormat.parse(line.split(",")[1]),
+                                LocalDateTime.parse(line.split(",")[0], dateTimeFormatter),
                                 showingMovie,
                                 Integer.parseInt(line.split(",")[3]),
                                 Integer.parseInt(line.split(",")[4])
@@ -154,7 +153,7 @@ public class Database {
             }
         } catch (FileNotFoundException fnfe) {
             //......
-        } catch (IOException | ParseException ioe) {
+        } catch (IOException ioe) {
 
         }
         return showings;

@@ -9,7 +9,9 @@ public class MovieShowing {
     private int availableTickets;
     private int roomNumber;
 
+    public LocalDateTime getStartTime() { return startTime; }
     public LocalDateTime getEndTime() { return endTime; }
+    public Movie getMovie() { return movie; }
 
     public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, int roomNumber) {
         this.startTime = startTime;
