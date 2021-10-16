@@ -1,5 +1,6 @@
 package nl.inholland.javafx.UI;
 
+import javafx.application.Application;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -20,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class LoginWindow {
-    Database db;
+    private Database db;
 
     //region Elements
     Scene scene;
@@ -134,5 +135,4 @@ public class LoginWindow {
         Stage loginWindow = new Stage();
         loadWindow(loginWindow);
     }
-
 }
