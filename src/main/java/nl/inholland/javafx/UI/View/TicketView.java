@@ -17,6 +17,12 @@ public class TicketView {
 
     public TicketView(Database db) {
         this.db = db;
+
+        setEventHandlers();
+    }
+
+    private void setEventHandlers() {
+
     }
 
     public HBox getView() {

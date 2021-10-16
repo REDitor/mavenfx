@@ -1,6 +1,5 @@
-package nl.inholland.javafx;
+package nl.inholland.javafx.UI;
 
-import javafx.application.Application;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,11 +15,11 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import nl.inholland.javafx.DataAccess.Database;
 import nl.inholland.javafx.Model.User.User;
-import nl.inholland.javafx.UI.MainWindow;
 
 import java.util.List;
+import java.util.Objects;
 
-public class LoginWindow extends Application {
+public class LoginWindow {
     Database db;
 
     //region Elements
@@ -47,6 +46,8 @@ public class LoginWindow extends Application {
 
         //initialize scene
         scene = new Scene(gridPane);
+
+        setEventHandlers(window);
 
         //Style + grid assignment
         styleWindow();
@@ -81,12 +82,8 @@ public class LoginWindow extends Application {
         gridPane.getChildren().addAll(lblUsername, txtUsername, lblPassword,
                 pwfPassword, btnLogin, lblErrorMessage);
     }
-    //endregion
 
-    @Override
-    public void start(Stage window) throws Exception {
-        loadWindow(window);
-
+    private void setEventHandlers(Stage loginWindow) {
         StringProperty txtUsernameProperty = txtUsername.textProperty();
         txtUsernameProperty.addListener(new ChangeListener<String>() {
             @Override
@@ -114,7 +111,7 @@ public class LoginWindow extends Application {
                         //check for correct password
                         if (pwfPassword.getText().equals(user.getPassword())) {
                             MainWindow mainWindow = new MainWindow(db, user);
-                            window.close();
+                            loginWindow.close();
                         }else {
                             lblErrorMessage.setText("Incorrect Password...");
                             lblErrorMessage.setVisible(true);
@@ -129,4 +126,13 @@ public class LoginWindow extends Application {
             }
         });
     }
+    //endregion
+
+    public LoginWindow(Database db) {
+        this.db = Objects.requireNonNullElseGet(db, Database::new);
+
+        Stage loginWindow = new Stage();
+        loadWindow(loginWindow);
+    }
+
 }
