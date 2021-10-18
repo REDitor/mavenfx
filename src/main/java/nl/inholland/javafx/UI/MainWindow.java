@@ -2,11 +2,14 @@ package nl.inholland.javafx.UI;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.User.Permission;
@@ -26,7 +29,15 @@ public class MainWindow {
     //endregion
 
     //region Elements
-    Scene ticketScene, manageShowingsScene, manageMoviesScene;
+    //Container(s)
+    VBox vbxMainContainer;
+    VBox vbxTicketView;
+    HBox hbxManageMoviesView;
+    HBox hbxManageShowingsView;
+
+    //Scenes
+    Scene scene;
+
     //Menu
     MenuBar menuBar;
     Menu adminMenu, sellTicketsMenu, helpMenu, logoutMenu;
@@ -45,28 +56,38 @@ public class MainWindow {
         loadWindow(window);
     }
 
-
     //region Initiate Window
     private void loadWindow(Stage window) {
-        window.setHeight(200);
-        window.setWidth(260);
+        window.setHeight(960);
+        window.setWidth(1280);
         window.setTitle("Fabulous Cinema -- -- Purchase Tickets -- username: " + loggedUser.getUsername());
 
         //Create elements based on user permission
         instantiateMenu(loggedUser);
 
+        vbxMainContainer = new VBox();
+        vbxMainContainer.getChildren().add(menuBar);
+
         //initialize ticketView as main page/scene
-        HBox hBox = ticketView.getView();
-        ticketScene = new Scene(hBox);
+        vbxTicketView = ticketView.getView();
+        vbxTicketView.setPadding(new Insets(10));
+        addToContainer(vbxTicketView);
+
+        scene = new Scene(vbxMainContainer);
 
         setEventHandlers(window);
+
         //Style + grid assignment
 //        styleWindow();
 //        assignGrid();
 
         //Display elements, scene and window
-        window.setScene(ticketScene);
+        window.setScene(scene);
         window.show();
+    }
+
+    private void refreshWindow() {
+
     }
 
     private void instantiateMenu(User loggedUser) {
@@ -76,6 +97,9 @@ public class MainWindow {
             adminMenu = new Menu("Admin");
             manageShowingsItem = new MenuItem("Manage Showings");
             manageMoviesItem = new MenuItem("Manage Movies");
+
+            adminMenu.getItems().addAll(manageShowingsItem, manageMoviesItem);
+            menuBar.getMenus().add(adminMenu);
         }
 
         sellTicketsMenu = new Menu("Sell Tickets");
@@ -85,26 +109,52 @@ public class MainWindow {
 
         logoutMenu = new Menu("Logout");
         logoutItem = new MenuItem("Logout...");
+
+        helpMenu.getItems().add(aboutItem);
+        logoutMenu.getItems().add(logoutItem);
+        menuBar.getMenus().addAll(sellTicketsMenu, helpMenu, logoutMenu);
+    }
+
+    private void addToContainer(Node node) {
+        if (!vbxMainContainer.getChildren().contains(node)) {
+            vbxMainContainer.getChildren().add(node);
+        }
+    }
+
+    private void resetView() {
+        vbxMainContainer.getChildren().removeAll();
+        vbxMainContainer.getChildren().add(menuBar);
     }
 
     private void setEventHandlers(Stage window) {
         manageShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                HBox hbox = manageShowingsView.getView();
-                manageShowingsScene = new Scene(hbox); //TODO: creates it every time --> CHANGE THIS
+                resetView();
+                hbxManageShowingsView = manageShowingsView.getView();
+                addToContainer(hbxManageShowingsView);
+                hbxManageMoviesView.setVisible(true);
+                //TODO: maybe better to hide instead of removing and adding
             }
         });
 
         manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                HBox hbox = manageMoviesView.getView();
-                manageMoviesScene = new Scene(hbox);
+                resetView();
+                hbxManageMoviesView = manageMoviesView.getView();
+                addToContainer(hbxManageMoviesView);
             }
         });
 
-        sellTicketsMenu.setOnAction(e -> window.setScene(ticketScene));
+        sellTicketsMenu.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                resetView();
+                vbxTicketView = ticketView.getView();
+                addToContainer(vbxTicketView);
+            }
+        });
     }
 
     private void styleWindow() {

@@ -35,25 +35,31 @@ public class Database {
 
     public Database() {
         users = new ArrayList<>();
+        users.addAll(getUsers());
         movies = new ArrayList<>();
+        movies.addAll(getMovies());
         room1 = new Room(1, 200);
+        room2 = new Room(2, 100);
         addInitialShowings();
     }
 
+    //region Rooms
     private void addInitialShowings() {
         //Room1
         room1.addShowing(
                 new MovieShowing(
                         LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
                         movies.get(0),
-                        room1.getNumberOfSeats()
+                        room1.getNumberOfSeats(),
+                        1
                 )
         );
         room1.addShowing(
                 new MovieShowing(
                         LocalDateTime.parse("10-10-2021 22:30", dateTimeFormatter),
                         movies.get(1),
-                        room1.getNumberOfSeats()
+                        room1.getNumberOfSeats(),
+                        1
                 )
         );
 
@@ -63,17 +69,20 @@ public class Database {
                 new MovieShowing(
                         LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
                         movies.get(1),
-                        room1.getNumberOfSeats()
+                        room1.getNumberOfSeats(),
+                        2
                 )
         );
         room2.addShowing(
                 new MovieShowing(
                         LocalDateTime.parse("09-10-2021 22:00", dateTimeFormatter),
                         movies.get(0),
-                        room1.getNumberOfSeats()
+                        room1.getNumberOfSeats(),
+                        2
                 )
         );
     }
+    //endregion
 
     //region Users
     public List<User> getUsers() {

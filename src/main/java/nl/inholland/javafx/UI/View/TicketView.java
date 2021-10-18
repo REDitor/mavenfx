@@ -2,6 +2,9 @@ package nl.inholland.javafx.UI.View;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
@@ -9,17 +12,27 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
+import nl.inholland.javafx.Model.Theatre.Room;
+import nl.inholland.javafx.Model.Theatre.Ticket;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TicketView {
     private Database db;
-    ObservableList<MovieShowing> showingsRoom1 = FXCollections.observableArrayList(db.getRoom1().getShowings());
-    ObservableList<MovieShowing> showingsRoom2 = FXCollections.observableArrayList(db.getRoom2().getShowings());
+    ObservableList<MovieShowing> showingsRoom1;
+    ObservableList<MovieShowing> showingsRoom2;
+    List<Ticket> soldTickets;
+    Room room1;
+    Room room2;
+    MovieShowing selectedShowing;
 
     //region Elements
+    VBox vBoxContainer;
+
     //region MovieShowings/Rooms
-    HBox hBox;
+    HBox hbxTableViews;
 
     VBox vBoxRoom1;
     Label lblRoom1;
@@ -38,6 +51,7 @@ public class TicketView {
 
     //region SellTicketOptions
     GridPane gridPane;
+
     Label lblRoom;
     Label lblRoomResult;
     Label lblMovieTitle;
@@ -53,26 +67,43 @@ public class TicketView {
     TextField txtNameResult;
     Button btnClear;
     //endregion
+
+    //region ErrorMessageBox
+    HBox hbxErrorMessage;
+    Label lblErrorMessage;
+    //endregion
     //endregion
 
-    public HBox getView() {
-        return hBox;
+    public VBox getView() {
+        return vBoxContainer;
     }
 
     public TicketView(Database db) {
         this.db = db;
+        room1 = db.getRoom1();
+        room2 = db.getRoom2();
+        showingsRoom1 = FXCollections.observableArrayList(room1.getShowings());
+        showingsRoom2 = FXCollections.observableArrayList(room2.getShowings());
+        soldTickets = new ArrayList<>();
 
-        setTableViews();
+
+        assignSections();
         setEventHandlers();
     }
 
-    private void setEventHandlers() {
+    //region Layout
+    private void assignSections() {
+        setTableViews();
+        setGridPane();
+        setErrorBox();
 
+        vBoxContainer = new VBox();
+        vBoxContainer.getChildren().addAll(hbxTableViews, gridPane, hbxErrorMessage); //add all containers to the parent container
     }
 
     //region TableViews
     private void setTableViews() {
-        hBox = new HBox();
+        hbxTableViews = new HBox();
 
         vBoxRoom1 = new VBox();
         lblRoom1 = new Label("Room 1");
@@ -82,7 +113,7 @@ public class TicketView {
         lblRoom2 = new Label("Room 2");
         tbvRoom2 = new TableView<>();
 
-        gridPane = setGridPane();
+//        setGridPane();
 
         colStartTime = new TableColumn<>("Start");
         colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
@@ -99,22 +130,24 @@ public class TicketView {
         colPrice = new TableColumn<>("Price");
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        assignSections();
-    }
-
-    private void assignSections() {
         tbvRoom1.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
-        vBoxRoom1.getChildren().addAll(lblRoom1, tbvRoom1);
+        vBoxRoom1.getChildren().addAll(lblRoom1, tbvRoom1); //add tableview for room 1 to a container
 
         tbvRoom2.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
-        vBoxRoom2.getChildren().addAll(lblRoom2, tbvRoom2);
+        vBoxRoom2.getChildren().addAll(lblRoom2, tbvRoom2); //add tableview for room 2 to a container
 
-        hBox.getChildren().addAll(vBoxRoom1, vBoxRoom2, gridPane);
+        hbxTableViews.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
     }
     //endregion
 
     //region GridPane
-    private GridPane setGridPane() {
+    private void setGridPane() {
+        gridPane = new GridPane();
+
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(20);
+        gridPane.setHgap(40);
+
         lblRoom = new Label("Room:");
         lblRoomResult = new Label();
         lblMovieTitle = new Label("Movie Title:");
@@ -124,7 +157,8 @@ public class TicketView {
         lblNrOfSeats = new Label("No. of seats:");
 
         chbNrOfSeatsResult = new ChoiceBox<>();
-        chbNrOfSeatsResult.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8, 9);
+        chbNrOfSeatsResult.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        chbNrOfSeatsResult.setValue(0);
 
         btnPurchase = new Button("Purchase");
         lblEndTime = new Label("End:");
@@ -134,8 +168,6 @@ public class TicketView {
         btnClear = new Button("Clear");
 
         assignGrid();
-
-        return gridPane;
     }
 
     private void assignGrid() {
@@ -159,6 +191,55 @@ public class TicketView {
                 lblNrOfSeats, chbNrOfSeatsResult, btnPurchase, lblEndTime, lblEndTimeResult, lblName, txtNameResult,
                 btnClear
         );
+    }
+    //endregion
+
+    //region ErrorMessageBox
+    private void setErrorBox() {
+        hbxErrorMessage = new HBox();
+        lblErrorMessage = new Label();
+
+        hbxErrorMessage.getChildren().add(lblErrorMessage);
+    }
+    //endregion
+    //endregion
+
+    //region Logic
+    private void setEventHandlers() {
+        //check if selected showing is in room 1
+        tbvRoom1.setOnMouseClicked(e -> {
+            if (tbvRoom1.getSelectionModel().getSelectedItem() != null) {
+                selectedShowing = tbvRoom1.getSelectionModel().getSelectedItem();
+            }
+        });
+
+        //check if selected showing is in room 2
+        tbvRoom2.setOnMouseClicked(e -> {
+            if (tbvRoom2.getSelectionModel().getSelectedItem() != null) {
+                selectedShowing = tbvRoom2.getSelectionModel().getSelectedItem();
+            }
+        });
+
+        btnPurchase.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                int numberOfTickets = chbNrOfSeatsResult.getSelectionModel().getSelectedItem();
+                if (selectedShowing != null && (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing))) {
+                    sellTickets(selectedShowing, numberOfTickets);
+                }
+            }
+        });
+
+    }
+
+    private void sellTickets(MovieShowing showing, int numberOfTickets) {
+        if (ticketsLeft(numberOfTickets, showing)) {
+            showing.setAvailableTickets(numberOfTickets); //decrement available tickets for showing
+        }
+    }
+
+    private boolean ticketsLeft(int numberOfTickets, MovieShowing showing) {
+        return numberOfTickets <= showing.getAvailableTickets(); //check if tickets are available
     }
     //endregion
 }

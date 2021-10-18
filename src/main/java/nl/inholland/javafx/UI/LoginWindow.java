@@ -14,6 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Exception.IncorrectPasswordException;
+import nl.inholland.javafx.Exception.UserNotFoundException;
 import nl.inholland.javafx.Model.User.User;
 
 import java.util.List;
@@ -104,7 +106,14 @@ public class LoginWindow {
             @Override
             public void handle(ActionEvent actionEvent) {
                 List<User> dbUsers = db.getUsers();
+                try {
 
+                } catch(UserNotFoundException unfe) {
+                    lblErrorMessage.setText(getExceptionMessage(unfe));
+                } catch(IncorrectPasswordException ipe) {
+                    lblErrorMessage.setText(getExceptionMessage(ipe));
+
+                }
                 for (User user : dbUsers) {
                     //check if user exists in database
                     if (txtUsername.getText().equals(user.getUsername())) {
@@ -112,6 +121,7 @@ public class LoginWindow {
                         if (pwfPassword.getText().equals(user.getPassword())) {
                             MainWindow mainWindow = new MainWindow(db, user);
                             loginWindow.close();
+                            return;
                         }else {
                             lblErrorMessage.setText("Incorrect Password...");
                             lblErrorMessage.setVisible(true);
@@ -125,6 +135,11 @@ public class LoginWindow {
                 pwfPassword.clear();
             }
         });
+    }
+
+    private String getExceptionMessage(Exception e) {
+        lblErrorMessage.setVisible(true);
+        return e.getMessage();
     }
     //endregion
 

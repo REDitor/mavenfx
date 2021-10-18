@@ -10,7 +10,6 @@ public class Ticket {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String title;
-    private
 
     public Ticket(MovieShowing showing, Room room) {
         //FIXME: Confused showing with ticket
