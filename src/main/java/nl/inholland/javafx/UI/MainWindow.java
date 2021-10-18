@@ -8,7 +8,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.User.Permission;
 import nl.inholland.javafx.Model.User.User;
 import nl.inholland.javafx.UI.View.ManageMoviesView;

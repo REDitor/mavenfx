@@ -1,65 +1,164 @@
 package nl.inholland.javafx.UI.View;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
-import nl.inholland.javafx.Model.Theatre.Ticket;
 
 import java.time.LocalDateTime;
 
 public class TicketView {
     private Database db;
+    ObservableList<MovieShowing> showingsRoom1 = FXCollections.observableArrayList(db.getRoom1().getShowings());
+    ObservableList<MovieShowing> showingsRoom2 = FXCollections.observableArrayList(db.getRoom2().getShowings());
+
+    //region Elements
+    //region MovieShowings/Rooms
+    HBox hBox;
+
+    VBox vBoxRoom1;
+    Label lblRoom1;
+    TableView<MovieShowing> tbvRoom1;
+
+    VBox vBoxRoom2;
+    Label lblRoom2;
+    TableView<MovieShowing> tbvRoom2;
+
+    TableColumn<MovieShowing, LocalDateTime> colStartTime;
+    TableColumn<MovieShowing, LocalDateTime> colEndTime;
+    TableColumn<MovieShowing, String> colTitle;
+    TableColumn<MovieShowing, Integer> colSeats;
+    TableColumn<MovieShowing, Double> colPrice;
+    //endregion
+
+    //region SellTicketOptions
+    GridPane gridPane;
+    Label lblRoom;
+    Label lblRoomResult;
+    Label lblMovieTitle;
+    Label lblMovieTitleResult;
+    Label lblStartTime;
+    Label lblStartTimeResult;
+    Label lblNrOfSeats;
+    ChoiceBox<Integer> chbNrOfSeatsResult;
+    Button btnPurchase;
+    Label lblEndTime;
+    Label lblEndTimeResult;
+    Label lblName;
+    TextField txtNameResult;
+    Button btnClear;
+    //endregion
+    //endregion
+
+    public HBox getView() {
+        return hBox;
+    }
 
     public TicketView(Database db) {
         this.db = db;
 
+        setTableViews();
         setEventHandlers();
     }
 
     private void setEventHandlers() {
-        ObservableList<MovieShowing>
+
     }
 
-    public HBox getView() {
-        HBox hBox = new HBox();
+    //region TableViews
+    private void setTableViews() {
+        hBox = new HBox();
 
-        VBox vBoxRoom1 = new VBox();
-        Label lblRoom1 = new Label("Room 1");
-        TableView<Ticket> tbvRoom1 = new TableView<>();
+        vBoxRoom1 = new VBox();
+        lblRoom1 = new Label("Room 1");
+        tbvRoom1 = new TableView<>();
 
-        VBox vBoxRoom2 = new VBox();
-        Label lblRoom2 = new Label("Room 2");
-        TableView<Ticket> tbvRoom2 = new TableView<>();
+        vBoxRoom2 = new VBox();
+        lblRoom2 = new Label("Room 2");
+        tbvRoom2 = new TableView<>();
 
-        TableColumn<Ticket, LocalDateTime> colStartTime = new TableColumn<>("Start");
+        gridPane = setGridPane();
+
+        colStartTime = new TableColumn<>("Start");
         colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
 
-        TableColumn<Ticket, LocalDateTime> colEndTime = new TableColumn<>("End");
-        colStartTime.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+        colEndTime = new TableColumn<>("End");
+        colEndTime.setCellValueFactory(new PropertyValueFactory<>("endTime"));
 
-        TableColumn<Ticket, String> colTitle = new TableColumn<>("Title");
-        colStartTime.setCellValueFactory(new PropertyValueFactory<>("title"));
+        colTitle = new TableColumn<>("Title");
+        colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<Ticket, Integer> colSeats = new TableColumn<>("Seats");
-        colStartTime.setCellValueFactory(new PropertyValueFactory<>("seats"));
+        colSeats = new TableColumn<>("Seats");
+        colSeats.setCellValueFactory(new PropertyValueFactory<>("seats"));
 
-        TableColumn<Ticket, Double> colPrice = new TableColumn<>("Price");
-        colStartTime.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colPrice = new TableColumn<>("Price");
+        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        assignSections();
+    }
+
+    private void assignSections() {
         tbvRoom1.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
         vBoxRoom1.getChildren().addAll(lblRoom1, tbvRoom1);
 
         tbvRoom2.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
         vBoxRoom2.getChildren().addAll(lblRoom2, tbvRoom2);
 
-        hBox.getChildren().addAll(vBoxRoom1, vBoxRoom2);
-
-        return hBox;
+        hBox.getChildren().addAll(vBoxRoom1, vBoxRoom2, gridPane);
     }
+    //endregion
+
+    //region GridPane
+    private GridPane setGridPane() {
+        lblRoom = new Label("Room:");
+        lblRoomResult = new Label();
+        lblMovieTitle = new Label("Movie Title:");
+        lblMovieTitleResult = new Label();
+        lblStartTime = new Label("Start:");
+        lblStartTimeResult = new Label();
+        lblNrOfSeats = new Label("No. of seats:");
+
+        chbNrOfSeatsResult = new ChoiceBox<>();
+        chbNrOfSeatsResult.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+        btnPurchase = new Button("Purchase");
+        lblEndTime = new Label("End:");
+        lblEndTimeResult = new Label();
+        lblName = new Label("Name:");
+        txtNameResult = new TextField();
+        btnClear = new Button("Clear");
+
+        assignGrid();
+
+        return gridPane;
+    }
+
+    private void assignGrid() {
+        GridPane.setConstraints(lblRoom, 0, 0);
+        GridPane.setConstraints(lblRoomResult, 1, 0);
+        GridPane.setConstraints(lblMovieTitle, 2, 0);
+        GridPane.setConstraints(lblMovieTitleResult, 3, 0);
+        GridPane.setConstraints(lblStartTime, 0, 1);
+        GridPane.setConstraints(lblStartTimeResult, 1, 1);
+        GridPane.setConstraints(lblNrOfSeats, 2, 1);
+        GridPane.setConstraints(chbNrOfSeatsResult, 3, 1);
+        GridPane.setConstraints(btnPurchase, 5, 1);
+        GridPane.setConstraints(lblEndTime, 0, 2);
+        GridPane.setConstraints(lblEndTimeResult, 1, 2);
+        GridPane.setConstraints(lblName, 2, 2);
+        GridPane.setConstraints(txtNameResult, 3, 2, 2, 1);
+        GridPane.setConstraints(btnClear, 5, 2);
+
+        gridPane.getChildren().addAll(
+                lblRoom, lblRoomResult, lblMovieTitle, lblMovieTitleResult, lblStartTime, lblStartTimeResult,
+                lblNrOfSeats, chbNrOfSeatsResult, btnPurchase, lblEndTime, lblEndTimeResult, lblName, txtNameResult,
+                btnClear
+        );
+    }
+    //endregion
 }

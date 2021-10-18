@@ -1,7 +1,7 @@
 package nl.inholland.javafx.UI.View;
 
 import javafx.scene.layout.HBox;
-import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Data.Database;
 
 public class ManageShowingsView {
     Database db;

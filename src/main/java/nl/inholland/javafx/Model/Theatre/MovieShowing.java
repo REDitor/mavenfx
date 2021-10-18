@@ -6,7 +6,6 @@ public class MovieShowing {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String title;
-    private int seats;
     private double price;
     private int availableTickets;
     int roomNumber;
@@ -28,11 +27,10 @@ public class MovieShowing {
         return price;
     }
 
-    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
+    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets) {
         this.startTime = startTime;
         this.endTime = startTime.plusMinutes(movie.getDuration().toMinutes());
         this.title = movie.getTitle();
-        this.seats = room.getNumberOfSeats();
         this.availableTickets = availableTickets;
         this.price = movie.getPrice();
     }

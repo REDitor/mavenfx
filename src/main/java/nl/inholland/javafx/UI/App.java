@@ -2,7 +2,7 @@ package nl.inholland.javafx.UI;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Data.Database;
 
 public class App extends Application {
     Database db;

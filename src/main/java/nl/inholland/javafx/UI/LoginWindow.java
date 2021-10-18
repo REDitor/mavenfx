@@ -13,7 +13,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import nl.inholland.javafx.DataAccess.Database;
+import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.User.User;
 
 import java.util.List;
@@ -76,7 +76,7 @@ public class LoginWindow {
         GridPane.setConstraints(txtUsername, 1, 0);
         GridPane.setConstraints(lblPassword, 0, 1);
         GridPane.setConstraints(pwfPassword, 1, 1);
-        GridPane.setConstraints(btnLogin, 1, 2);
+        GridPane.setConstraints(btnLogin, 0, 2);
         GridPane.setConstraints(lblErrorMessage, 0, 3, 1, 3);
 
         gridPane.getChildren().addAll(lblUsername, txtUsername, lblPassword,

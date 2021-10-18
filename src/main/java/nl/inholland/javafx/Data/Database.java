@@ -1,4 +1,4 @@
-package nl.inholland.javafx.DataAccess;
+package nl.inholland.javafx.Data;
 
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
@@ -22,24 +22,65 @@ public class Database {
 
     private List<User> users;
     private List<Movie> movies;
-    private List<MovieShowing> showings;
     private Room room1;
     private Room room2;
+
+    public Room getRoom1() {
+        return room1;
+    }
+
+    public Room getRoom2() {
+        return room2;
+    }
 
     public Database() {
         users = new ArrayList<>();
         movies = new ArrayList<>();
-        showings = new ArrayList<>();
         room1 = new Room(1, 200);
-        room2 = new Room(2, 100);
+        addInitialShowings();
     }
 
-    //region Read
+    private void addInitialShowings() {
+        //Room1
+        room1.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
+                        movies.get(0),
+                        room1.getNumberOfSeats()
+                )
+        );
+        room1.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("10-10-2021 22:30", dateTimeFormatter),
+                        movies.get(1),
+                        room1.getNumberOfSeats()
+                )
+        );
+
+        //Room2
+        room2 = new Room(2, 100);
+        room2.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
+                        movies.get(1),
+                        room1.getNumberOfSeats()
+                )
+        );
+        room2.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("09-10-2021 22:00", dateTimeFormatter),
+                        movies.get(0),
+                        room1.getNumberOfSeats()
+                )
+        );
+    }
+
+    //region Users
     public List<User> getUsers() {
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "users.csv")));
             for (String line : strings) {
-                if (line.split(",")[2] == "admin") {
+                if (line.split(",")[2].equals("admin")) {
                     users.add(
                             new Admin(
                                     line.split(",")[0],
@@ -64,7 +105,9 @@ public class Database {
 
         return users;
     }
+    //endregion
 
+    //region Movies
     public List<Movie> getMovies() {
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "movies.csv")));
@@ -84,52 +127,6 @@ public class Database {
         }
 
         return movies;
-    }
-
-    public List<MovieShowing> getShowings() {
-        try {
-            List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "showings.csv")));
-            for (String line : strings) {
-                Movie showingMovie = null;
-                for (Movie movie : movies) {
-                    if (movie.getTitle().equals(line.split(",")[2])) {    //check showingTitle
-                        showingMovie = movie;
-                    }
-                }
-
-                showings.add(
-                        new MovieShowing(
-                                LocalDateTime.parse(line.split(",")[0], dateTimeFormatter),
-                                showingMovie,
-                                Integer.parseInt(line.split(",")[3]),
-                                Integer.parseInt(line.split(",")[4])
-                        )
-                );
-            }
-        } catch (FileNotFoundException fnfe) {
-            //......
-        } catch (IOException ioe) {
-            //
-        }
-        return showings;
-    }
-    //endregion
-
-    //region Write
-    public void addMovie(Movie movie) {
-        try {
-
-        } catch () {
-
-        }
-    }
-
-    public void addShowing(MovieShowing showing) {
-        try {
-
-        } catch () {
-
-        }
     }
     //endregion
 }

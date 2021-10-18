@@ -16,7 +16,9 @@ public class Room {
     public int getNumberOfSeats() {
         return numberOfSeats;
     }
-
+    public ArrayList<MovieShowing> getShowings() {
+        return showings;
+    }
 
     public Room(int roomNumber, int numberOfSeats) {
         this.roomNumber = roomNumber;
@@ -24,15 +26,7 @@ public class Room {
         this.showings = new ArrayList<>();
     }
 
-    //    public ArrayList<MovieShowing> getShowings() { return showings; }
-//    public void addShowing(MovieShowing showing) { showings.add(showing); }
-//    public int getNumberOfSeats() { return numberOfSeats; }
-//
-//    public Room(int roomNumber) {
-//        showings = new ArrayList<>();
-//
-//        this.roomNumber = roomNumber;
-//    }
-
-
+    public void addShowing(MovieShowing showing) {
+        showings.add(showing);
+    }
 }
