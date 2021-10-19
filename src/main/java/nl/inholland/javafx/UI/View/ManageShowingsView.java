@@ -28,6 +28,11 @@ public class ManageShowingsView implements View{
     }
 
     @Override
+    public void refreshView() {
+
+    }
+
+    @Override
     public void setEventHandlers() {
 
     }
