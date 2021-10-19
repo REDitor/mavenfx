@@ -6,5 +6,6 @@ public interface View {
     VBox getView();
     void assignSections();
     void styleView();
+    void refreshView();
     void setEventHandlers();
 }

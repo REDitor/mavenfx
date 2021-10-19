@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TicketView implements View {
+    //TODO: Put duplicates into mainwindow class
+
+    //FIXME: Format tableview items correctly
+
     private Database db;
     ObservableList<MovieShowing> showingsRoom1;
     ObservableList<MovieShowing> showingsRoom2;
@@ -112,11 +116,19 @@ public class TicketView implements View {
 
     @Override
     public void styleView() {
+        lblTitle.setStyle("-fx-text-fill: #19295e; -fx-font-size: 16");
         vBoxContainer.getStylesheets().add("css/style.css");
         vBoxContainer.setId("view");
         hbxTableViews.setId("tableViewContainer");
+
         vBoxRoom1.setId("tableView");
+        vBoxRoom1.setPadding(new Insets(0, 5, 10, 0));
+        vBoxRoom1.setMinWidth(625);
+
         vBoxRoom2.setId("tableView");
+        vBoxRoom2.setMinWidth(625);
+        vBoxRoom2.setPadding(new Insets(0, 10, 10, 5));
+
         gridPane.setId("insertOptions");
         hbxErrorMessage.setId("errorBox");
     }
@@ -195,9 +207,11 @@ public class TicketView implements View {
         colPriceRoom2.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         tbvRoom1.getColumns().addAll(colStartTimeRoom1, colEndTimeRoom1, colTitleRoom1, colSeatsRoom1, colPriceRoom1);
+        tbvRoom1.setItems(showingsRoom1);
         vBoxRoom1.getChildren().addAll(lblRoom1, tbvRoom1); //add tableview for room 1 to a container
 
         tbvRoom2.getColumns().addAll(colStartTimeRoom2, colEndTimeRoom2, colTitleRoom2, colSeatsRoom2, colPriceRoom2);
+        tbvRoom2.setItems(showingsRoom2);
         vBoxRoom2.getChildren().addAll(lblRoom2, tbvRoom2); //add tableview for room 2 to a container
 
         hbxTableViews.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
