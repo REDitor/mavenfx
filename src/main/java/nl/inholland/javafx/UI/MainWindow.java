@@ -8,9 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.User.Permission;
 import nl.inholland.javafx.Model.User.User;
@@ -58,7 +60,7 @@ public class MainWindow {
 
     //region Initiate Window
     private void loadWindow(Stage window) {
-        window.setHeight(700);
+        window.setHeight(650);
         window.setWidth(1280);
         window.setTitle("Fabulous Cinema -- -- Purchase Tickets -- username: " + loggedUser.getUsername());
 
@@ -158,6 +160,8 @@ public class MainWindow {
     }
 
     private void styleWindow() {
+        JMetro jMetro = new JMetro(Style.DARK);
+        jMetro.setScene(scene);
         scene.getStylesheets().add("css/style.css");
         menuBar.setId("menu");
     }

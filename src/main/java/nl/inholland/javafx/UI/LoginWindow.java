@@ -13,9 +13,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
-import nl.inholland.javafx.Exception.IncorrectPasswordException;
-import nl.inholland.javafx.Exception.UserNotFoundException;
 import nl.inholland.javafx.Model.User.User;
 
 import java.util.List;
@@ -67,9 +67,12 @@ public class LoginWindow {
         lblErrorMessage.setVisible(false);
         btnLogin.setVisible(false);
 
+        JMetro jMetro = new JMetro(Style.DARK);
+        jMetro.setScene(scene);
+
         //css
         scene.getStylesheets().add("css/style.css");
-        gridPane.setId("gridPane");
+        gridPane.setId("login");
         lblErrorMessage.setStyle("-fx-text-fill: red");
     }
 

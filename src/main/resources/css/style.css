@@ -1,4 +1,4 @@
-.Root {
+Root {
     -fx-background-color: #333;
 }
 
@@ -21,6 +21,13 @@
     -fx-text-fill: #fff;
 }
 
+/* Login Window */
+#login {
+    -fx-background-color: #333;
+    -fx-text-fill: #fff;
+}
+
+/*Main Window*/
 #menu {
     -fx-background-color: black;
     -fx-text-fill: #fff;
@@ -28,11 +35,6 @@
 
 #view {
     -fx-background-color: #fff;
-}
-
-#gridPane {
-    -fx-background-color: #333;
-    -fx-text-fill: #fff;
 }
 
 #tableViewContainer {

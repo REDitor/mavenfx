@@ -39,15 +39,21 @@ public class TicketView implements View {
     Label lblRoom1;
     TableView<MovieShowing> tbvRoom1;
 
+    TableColumn<MovieShowing, LocalDateTime> colStartTimeRoom1;
+    TableColumn<MovieShowing, LocalDateTime> colEndTimeRoom1;
+    TableColumn<MovieShowing, String> colTitleRoom1;
+    TableColumn<MovieShowing, Integer> colSeatsRoom1;
+    TableColumn<MovieShowing, Double> colPriceRoom1;
+
     VBox vBoxRoom2;
     Label lblRoom2;
     TableView<MovieShowing> tbvRoom2;
 
-    TableColumn<MovieShowing, LocalDateTime> colStartTime;
-    TableColumn<MovieShowing, LocalDateTime> colEndTime;
-    TableColumn<MovieShowing, String> colTitle;
-    TableColumn<MovieShowing, Integer> colSeats;
-    TableColumn<MovieShowing, Double> colPrice;
+    TableColumn<MovieShowing, LocalDateTime> colStartTimeRoom2;
+    TableColumn<MovieShowing, LocalDateTime> colEndTimeRoom2;
+    TableColumn<MovieShowing, String> colTitleRoom2;
+    TableColumn<MovieShowing, Integer> colSeatsRoom2;
+    TableColumn<MovieShowing, Double> colPriceRoom2;
     //endregion
 
     //region SellTicketOptions
@@ -113,6 +119,9 @@ public class TicketView implements View {
         vBoxRoom2.setId("tableView");
         gridPane.setId("insertOptions");
         hbxErrorMessage.setId("errorBox");
+    }
+
+    public void refreshView() {
 
     }
 
@@ -151,29 +160,44 @@ public class TicketView implements View {
         lblRoom1 = new Label("Room 1");
         tbvRoom1 = new TableView<>();
 
+        colStartTimeRoom1 = new TableColumn<>("Start");
+        colStartTimeRoom1.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+
+        colEndTimeRoom1 = new TableColumn<>("End");
+        colEndTimeRoom1.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+
+        colTitleRoom1 = new TableColumn<>("Title");
+        colTitleRoom1.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        colSeatsRoom1 = new TableColumn<>("Seats");
+        colSeatsRoom1.setCellValueFactory(new PropertyValueFactory<>("seats"));
+
+        colPriceRoom1 = new TableColumn<>("Price");
+        colPriceRoom1.setCellValueFactory(new PropertyValueFactory<>("price"));
+
         vBoxRoom2 = new VBox();
         lblRoom2 = new Label("Room 2");
         tbvRoom2 = new TableView<>();
 
-        colStartTime = new TableColumn<>("Start");
-        colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+        colStartTimeRoom2 = new TableColumn<>("Start");
+        colStartTimeRoom2.setCellValueFactory(new PropertyValueFactory<>("startTime"));
 
-        colEndTime = new TableColumn<>("End");
-        colEndTime.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+        colEndTimeRoom2 = new TableColumn<>("End");
+        colEndTimeRoom2.setCellValueFactory(new PropertyValueFactory<>("endTime"));
 
-        colTitle = new TableColumn<>("Title");
-        colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+        colTitleRoom2 = new TableColumn<>("Title");
+        colTitleRoom2.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        colSeats = new TableColumn<>("Seats");
-        colSeats.setCellValueFactory(new PropertyValueFactory<>("seats"));
+        colSeatsRoom2 = new TableColumn<>("Seats");
+        colSeatsRoom2.setCellValueFactory(new PropertyValueFactory<>("seats"));
 
-        colPrice = new TableColumn<>("Price");
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colPriceRoom2 = new TableColumn<>("Price");
+        colPriceRoom2.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        tbvRoom1.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
+        tbvRoom1.getColumns().addAll(colStartTimeRoom1, colEndTimeRoom1, colTitleRoom1, colSeatsRoom1, colPriceRoom1);
         vBoxRoom1.getChildren().addAll(lblRoom1, tbvRoom1); //add tableview for room 1 to a container
 
-        tbvRoom2.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
+        tbvRoom2.getColumns().addAll(colStartTimeRoom2, colEndTimeRoom2, colTitleRoom2, colSeatsRoom2, colPriceRoom2);
         vBoxRoom2.getChildren().addAll(lblRoom2, tbvRoom2); //add tableview for room 2 to a container
 
         hbxTableViews.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
