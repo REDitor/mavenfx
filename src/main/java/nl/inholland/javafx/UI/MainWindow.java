@@ -124,25 +124,28 @@ public class MainWindow {
     }
 
     private void setEventHandlers(Stage window) {
-        manageShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                resetView();
-                vbxManageShowingsView = manageShowingsView.getView();
-                addToContainer(vbxManageShowingsView);
-                vbxManageMoviesView.setVisible(true);
-                //TODO: maybe better to hide instead of removing and adding
-            }
-        });
+        if (manageShowingsItem != null) {
+            manageShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    resetView();
+                    vbxManageShowingsView = manageShowingsView.getView();
+                    addToContainer(vbxManageShowingsView);
+                    vbxManageMoviesView.setVisible(true);
+                }
+            });
+        }
 
-        manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                resetView();
-                vbxManageMoviesView = manageMoviesView.getView();
-                addToContainer(vbxManageMoviesView);
-            }
-        });
+        if (manageShowingsItem != null) {
+            manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    resetView();
+                    vbxManageMoviesView = manageMoviesView.getView();
+                    addToContainer(vbxManageMoviesView);
+                }
+            });
+        }
 
         sellTicketsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
