@@ -28,6 +28,9 @@ public class MovieShowing {
     public void deductAvailableTickets(int numberOfTickets) {
         availableTickets -= numberOfTickets;
     }
+    public int getNumberOfSeats() {
+        return numberOfSeats;
+    }
 
     public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
         this.startTime = startTime;

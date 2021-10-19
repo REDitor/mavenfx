@@ -19,6 +19,8 @@ import nl.inholland.javafx.UI.View.ManageMoviesView;
 import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
 
+import javax.swing.text.View;
+
 public class MainWindow {
     Database db;
     User loggedUser;
@@ -41,8 +43,8 @@ public class MainWindow {
 
     //Menu
     MenuBar menuBar;
-    Menu adminMenu, sellTicketsMenu, helpMenu, logoutMenu;
-    MenuItem manageShowingsItem, manageMoviesItem, aboutItem, logoutItem;
+    Menu userMenu, adminMenu, helpMenu, logoutMenu;
+    MenuItem manageShowingsItem, manageMoviesItem, aboutItem, logoutItem, sellTicketsItem;
     //endregion
 
     public MainWindow(Database db, User loggedUser) {
@@ -100,17 +102,21 @@ public class MainWindow {
 
     private void instantiateMenu(User loggedUser) {
         menuBar = new MenuBar();
+        sellTicketsItem = new MenuItem("Sell Tickets");
 
         if (loggedUser.getPermission() == Permission.Admin) {
             adminMenu = new Menu("Admin");
+
             manageShowingsItem = new MenuItem("Manage Showings");
             manageMoviesItem = new MenuItem("Manage Movies");
 
-            adminMenu.getItems().addAll(manageShowingsItem, manageMoviesItem);
+            adminMenu.getItems().addAll(sellTicketsItem, manageShowingsItem, manageMoviesItem);
             menuBar.getMenus().add(adminMenu);
+        } else {
+            userMenu = new Menu("User");
+            userMenu.getItems().add(sellTicketsItem);
+            menuBar.getMenus().add(userMenu);
         }
-
-        sellTicketsMenu = new Menu("Sell Tickets");
 
         helpMenu = new Menu("Help");
         aboutItem = new MenuItem("About");
@@ -120,7 +126,7 @@ public class MainWindow {
 
         helpMenu.getItems().add(aboutItem);
         logoutMenu.getItems().add(logoutItem);
-        menuBar.getMenus().addAll(sellTicketsMenu, helpMenu, logoutMenu);
+        menuBar.getMenus().addAll(helpMenu, logoutMenu);
     }
 
     // private void addToMainContainer(Node node) {
@@ -160,13 +166,14 @@ public class MainWindow {
             });
         }
 
-        sellTicketsMenu.setOnAction(new EventHandler<ActionEvent>() {
+
+
+        sellTicketsItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
                 hideViews();
                 vbxTicketView = ticketView.getView();
                 vbxTicketView.setVisible(true);
-                // addToMainContainer(vbxTicketView);
             }
         });
     }

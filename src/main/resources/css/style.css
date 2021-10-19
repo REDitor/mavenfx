@@ -40,7 +40,6 @@ Root {
 #tableViewContainer {
     -fx-background-color: #fff;
     -fx-text-fill: #19295e;
-    -fx-border: 2px solid #19295e;
 }
 
 #insertOptions {

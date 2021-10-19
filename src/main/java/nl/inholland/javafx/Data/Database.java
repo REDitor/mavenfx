@@ -86,18 +86,19 @@ public class Database {
 
     //region Users
     public List<User> getUsers() {
+        List<User> dbUsers = new ArrayList<>();
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "users.csv")));
             for (String line : strings) {
                 if (line.split(",")[2].equals("admin")) {
-                    users.add(
+                    dbUsers.add(
                             new Admin(
                                     line.split(",")[0],
                                     line.split(",")[1]
                             )
                     );
                 } else {
-                    users.add(
+                    dbUsers.add(
                             new User(
                                     line.split(",")[0],
                                     line.split(",")[1]
@@ -112,7 +113,7 @@ public class Database {
             //...
         }
 
-        return users;
+        return dbUsers;
     }
     //endregion
 

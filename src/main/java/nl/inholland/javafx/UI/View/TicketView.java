@@ -20,17 +20,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TicketView implements View {
+public class TicketView {
+    Database db;
     //TODO: Put duplicates into mainwindow class
 
     //FIXME: Format tableview items correctly
 
-    private Database db;
     ObservableList<MovieShowing> showingsRoom1;
     ObservableList<MovieShowing> showingsRoom2;
     List<Ticket> soldTickets;
     Room room1;
     Room room2;
+    Room selectedRoom;
     MovieShowing selectedShowing;
 
     //region Elements
@@ -89,12 +90,12 @@ public class TicketView implements View {
     }
 
     //region Interface
-    @Override
+
     public VBox getView() {
         return vBoxMainContainer;
     }
 
-    @Override
+
     public void assignSections() {
         setTableViews();
         setGridPane();
@@ -104,7 +105,7 @@ public class TicketView implements View {
         vBoxMainContainer.getChildren().addAll(lblTitle, hBoxTableViews, gridPane, hBoxErrorMessage); //add all containers to the parent container
     }
 
-    @Override
+
     public void styleView() {
         lblTitle.setStyle("-fx-text-fill: #19295e; -fx-font-size: 16");
         vBoxMainContainer.getStylesheets().add("css/style.css");
@@ -124,15 +125,22 @@ public class TicketView implements View {
         hBoxErrorMessage.minHeight(30);
     }
 
-    @Override
+
     public void refreshView() {
 
     }
 
-    @Override
+    private void setSelectedRoom(TableView tableView) {
+        if (tableView == tableViewRoom1) {
+            selectedRoom = room1;
+        } else {
+            selectedRoom = room2;
+        }
+    }
+
     public void setEventHandlers() {
-        //check if selected showing is in room 1
         tableViewRoom1.setOnMouseClicked(e -> {
+            setSelectedRoom(tableViewRoom1);
             if (tableViewRoom1.getSelectionModel().getSelectedItem() != null) {
                 tableViewRoom2.getSelectionModel().clearSelection();
                 selectedShowing = tableViewRoom1.getSelectionModel().getSelectedItem();
@@ -147,8 +155,8 @@ public class TicketView implements View {
             }
         });
 
-        //check if selected showing is in room 2
         tableViewRoom2.setOnMouseClicked(e -> {
+            setSelectedRoom(tableViewRoom2);
             if (tableViewRoom2.getSelectionModel().getSelectedItem() != null) {
                 tableViewRoom1.getSelectionModel().clearSelection();
                 selectedShowing = tableViewRoom2.getSelectionModel().getSelectedItem();
@@ -286,6 +294,15 @@ public class TicketView implements View {
     private void sellTickets(MovieShowing showing, int numberOfTickets) {
         if (ticketsLeft(numberOfTickets, showing)) {
             showing.deductAvailableTickets(numberOfTickets); //decrement available tickets for showing
+            for (int i = 0; i < numberOfTickets; i++) {
+                Ticket ticket = new Ticket(
+                        selectedRoom.getRoomNumber(),
+                        selectedShowing.getStartTime(),
+                        selectedShowing.getEndTime(),
+                        selectedShowing.getTitle()
+                );
+                soldTickets.add(ticket);
+            }
         }
     }
 

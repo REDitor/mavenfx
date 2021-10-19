@@ -1,39 +1,37 @@
 package nl.inholland.javafx.UI.View;
 
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import nl.inholland.javafx.Data.Database;
 
-public class ManageShowingsView implements View{
+public class ManageShowingsView {
     Database db;
+
 
     public ManageShowingsView(Database db) {
         this.db = db;
     }
 
-
-    @Override
     public VBox getView() {
-        return new VBox();
+
     }
 
-    @Override
+
     public void assignSections() {
 
     }
 
-    @Override
+
     public void styleView() {
 
     }
 
-    @Override
-    public void refreshView() {
+
+    void refreshView() {
 
     }
 
-    @Override
-    public void setEventHandlers() {
+
+    void setEventHandlers() {
 
     }
 }
