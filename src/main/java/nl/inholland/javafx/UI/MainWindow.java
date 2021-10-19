@@ -5,39 +5,56 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.User.Permission;
 import nl.inholland.javafx.Model.User.User;
-import nl.inholland.javafx.UI.View.ManageMoviesView;
-import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
+import nl.inholland.javafx.UI.View.View;
 
 public class MainWindow {
     Database db;
     User loggedUser;
 
+    //region Elements
+    //Container
+    VBox vBoxMainContainer;
+
     //region Views
-    TicketView ticketView;
-    ManageMoviesView manageMoviesView;
-    ManageShowingsView manageShowingsView;
+    View view;
+    VBox vBoxView;
+
+    Label lblViewHeader;
+    HBox hBoxTableViews;
+
+    VBox vboxTableViewRoom1;
+    Label lblRoom1Header;
+
+    VBox vboxTableViewRoom2;
+    Label lblRoom2Header;
+
+    TableView<MovieShowing> roomTableView;
+    TableColumn<MovieShowing, String> colStartTime;
+    TableColumn<MovieShowing, String> colEndTime;
+    TableColumn<MovieShowing, String> colTitle;
+    TableColumn<MovieShowing, String> colSeats;
+    TableColumn<MovieShowing, String> colPrice;
+
+    GridPane gridPaneInfo;
+
+    HBox hBoxErrorMessage;
+    Label lblErrorMessage;
     //endregion
 
-    //region Elements
-    //Container(s)
-    VBox vbxMainContainer;
-    VBox vbxTicketView;
-    VBox vbxManageMoviesView;
-    VBox vbxManageShowingsView;
-
-    //Scenes
+    //Scene
     Scene scene;
 
     //Menu
@@ -49,10 +66,6 @@ public class MainWindow {
     public MainWindow(Database db, User loggedUser) {
         this.db = db;
         this.loggedUser = loggedUser;
-
-        ticketView = new TicketView(db);
-        manageMoviesView = new ManageMoviesView(db);
-        manageShowingsView = new ManageShowingsView(db);
 
         Stage window = new Stage();
         loadWindow(window);
@@ -67,15 +80,15 @@ public class MainWindow {
         //Create elements based on user permission
         instantiateMenu(loggedUser);
 
-        vbxMainContainer = new VBox();
-        vbxMainContainer.getChildren().add(menuBar);
+        //Add MenuBar
+        vBoxMainContainer = new VBox();
+        vBoxMainContainer.getChildren().add(menuBar);
 
-        //initialize ticketView as main page/scene
-        vbxTicketView = ticketView.getView();
-        vbxTicketView.setPadding(new Insets(10));
-        addToContainer(vbxTicketView);
+        //initialize main page/ticket view
+        view = new TicketView(db);
 
-        scene = new Scene(vbxMainContainer);
+
+        scene = new Scene(vBoxMainContainer);
         styleWindow();
 
         setEventHandlers(window);
@@ -83,10 +96,6 @@ public class MainWindow {
         //Display elements, scene and window
         window.setScene(scene);
         window.show();
-    }
-
-    private void refreshWindow() {
-
     }
 
     private void instantiateMenu(User loggedUser) {
@@ -114,15 +123,47 @@ public class MainWindow {
         menuBar.getMenus().addAll(sellTicketsMenu, helpMenu, logoutMenu);
     }
 
+    private void fillTicketView() {
+        emptyView();
+
+        Label lblRoom;
+        Label lblRoomResult;
+        Label lblMovieTitle;
+        Label lblMovieTitleResult;
+        Label lblStartTime;
+        Label lblStartTimeResult;
+        Label lblNrOfSeats;
+        Label lblNrOfSeatsResult;
+        ChoiceBox<Integer> choiceBoxNrOfSeats;
+        Button btnPurchase;
+        Label lblEndTime;
+        Label lblEndTimeResult;
+        Label lblCustomerName;
+        TextField txtCustomerName;
+        Button btnClear;
+    }
+
+    private void fillManageShowingsView() {
+        emptyView();
+    }
+
+    private void fillManageMoviesView() {
+        emptyView();
+    }
+
+    private void emptyView() {
+        vBoxView.getChildren().removeAll();
+    }
+
     private void addToContainer(Node node) {
-        if (!vbxMainContainer.getChildren().contains(node)) {
-            vbxMainContainer.getChildren().add(node);
+        if (!vBoxMainContainer.getChildren().contains(node)) {
+            vBoxMainContainer.getChildren().add(node);
         }
     }
 
     private void resetView() {
-        vbxMainContainer.getChildren().removeAll();
-        vbxMainContainer.getChildren().add(menuBar);
+        vBoxMainContainer.getChildren().removeAll();
+        vBoxMainContainer.getChildren().add(menuBar);
     }
 
     private void setEventHandlers(Stage window) {
