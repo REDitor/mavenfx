@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TicketView {
+public class TicketView implements View {
     private Database db;
     ObservableList<MovieShowing> showingsRoom1;
     ObservableList<MovieShowing> showingsRoom2;
@@ -30,6 +30,7 @@ public class TicketView {
 
     //region Elements
     VBox vBoxContainer;
+    Label lblTitle = new Label("Purchase Tickets");
 
     //region MovieShowings/Rooms
     HBox hbxTableViews;
@@ -74,10 +75,6 @@ public class TicketView {
     //endregion
     //endregion
 
-    public VBox getView() {
-        return vBoxContainer;
-    }
-
     public TicketView(Database db) {
         this.db = db;
         room1 = db.getRoom1();
@@ -86,22 +83,67 @@ public class TicketView {
         showingsRoom2 = FXCollections.observableArrayList(room2.getShowings());
         soldTickets = new ArrayList<>();
 
-
         assignSections();
+        styleView();
         setEventHandlers();
     }
 
-    //region Layout
-    private void assignSections() {
+    //region Interface
+    @Override
+    public VBox getView() {
+        return vBoxContainer;
+    }
+
+    @Override
+    public void assignSections() {
         setTableViews();
         setGridPane();
         setErrorBox();
 
         vBoxContainer = new VBox();
-        vBoxContainer.getChildren().addAll(hbxTableViews, gridPane, hbxErrorMessage); //add all containers to the parent container
+        vBoxContainer.getChildren().addAll(lblTitle, hbxTableViews, gridPane, hbxErrorMessage); //add all containers to the parent container
     }
 
-    //region TableViews
+    @Override
+    public void styleView() {
+        vBoxContainer.getStylesheets().add("css/style.css");
+        vBoxContainer.setId("view");
+        hbxTableViews.setId("tableViewContainer");
+        vBoxRoom1.setId("tableView");
+        vBoxRoom2.setId("tableView");
+        gridPane.setId("insertOptions");
+        hbxErrorMessage.setId("errorBox");
+
+    }
+
+    @Override
+    public void setEventHandlers() {
+        //check if selected showing is in room 1
+        tbvRoom1.setOnMouseClicked(e -> {
+            if (tbvRoom1.getSelectionModel().getSelectedItem() != null) {
+                selectedShowing = tbvRoom1.getSelectionModel().getSelectedItem();
+            }
+        });
+
+        //check if selected showing is in room 2
+        tbvRoom2.setOnMouseClicked(e -> {
+            if (tbvRoom2.getSelectionModel().getSelectedItem() != null) {
+                selectedShowing = tbvRoom2.getSelectionModel().getSelectedItem();
+            }
+        });
+
+        btnPurchase.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                int numberOfTickets = chbNrOfSeatsResult.getSelectionModel().getSelectedItem();
+                if (selectedShowing != null && (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing))) {
+                    sellTickets(selectedShowing, numberOfTickets);
+                }
+            }
+        });
+    }
+    //endregion
+
     private void setTableViews() {
         hbxTableViews = new HBox();
 
@@ -112,8 +154,6 @@ public class TicketView {
         vBoxRoom2 = new VBox();
         lblRoom2 = new Label("Room 2");
         tbvRoom2 = new TableView<>();
-
-//        setGridPane();
 
         colStartTime = new TableColumn<>("Start");
         colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
@@ -138,9 +178,7 @@ public class TicketView {
 
         hbxTableViews.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
     }
-    //endregion
 
-    //region GridPane
     private void setGridPane() {
         gridPane = new GridPane();
 
@@ -192,44 +230,12 @@ public class TicketView {
                 btnClear
         );
     }
-    //endregion
 
-    //region ErrorMessageBox
     private void setErrorBox() {
         hbxErrorMessage = new HBox();
         lblErrorMessage = new Label();
 
         hbxErrorMessage.getChildren().add(lblErrorMessage);
-    }
-    //endregion
-    //endregion
-
-    //region Logic
-    private void setEventHandlers() {
-        //check if selected showing is in room 1
-        tbvRoom1.setOnMouseClicked(e -> {
-            if (tbvRoom1.getSelectionModel().getSelectedItem() != null) {
-                selectedShowing = tbvRoom1.getSelectionModel().getSelectedItem();
-            }
-        });
-
-        //check if selected showing is in room 2
-        tbvRoom2.setOnMouseClicked(e -> {
-            if (tbvRoom2.getSelectionModel().getSelectedItem() != null) {
-                selectedShowing = tbvRoom2.getSelectionModel().getSelectedItem();
-            }
-        });
-
-        btnPurchase.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                int numberOfTickets = chbNrOfSeatsResult.getSelectionModel().getSelectedItem();
-                if (selectedShowing != null && (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing))) {
-                    sellTickets(selectedShowing, numberOfTickets);
-                }
-            }
-        });
-
     }
 
     private void sellTickets(MovieShowing showing, int numberOfTickets) {
@@ -241,5 +247,4 @@ public class TicketView {
     private boolean ticketsLeft(int numberOfTickets, MovieShowing showing) {
         return numberOfTickets <= showing.getAvailableTickets(); //check if tickets are available
     }
-    //endregion
 }

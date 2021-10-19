@@ -106,14 +106,12 @@ public class LoginWindow {
             @Override
             public void handle(ActionEvent actionEvent) {
                 List<User> dbUsers = db.getUsers();
-                try {
-
-                } catch(UserNotFoundException unfe) {
-                    lblErrorMessage.setText(getExceptionMessage(unfe));
-                } catch(IncorrectPasswordException ipe) {
-                    lblErrorMessage.setText(getExceptionMessage(ipe));
-
-                }
+//                try {
+//
+//                } catch(UserNotFoundException | IncorrectPasswordException e) {
+//                    lblErrorMessage.setVisible(true);
+//                    lblErrorMessage.setText(e.getMessage());
+//                }
                 for (User user : dbUsers) {
                     //check if user exists in database
                     if (txtUsername.getText().equals(user.getUsername())) {
@@ -135,11 +133,6 @@ public class LoginWindow {
                 pwfPassword.clear();
             }
         });
-    }
-
-    private String getExceptionMessage(Exception e) {
-        lblErrorMessage.setVisible(true);
-        return e.getMessage();
     }
     //endregion
 

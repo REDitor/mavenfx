@@ -1,17 +1,53 @@
 .Root {
     -fx-background-color: #333;
+    -fx-padding: 10;
 }
 
 .button {
-    -fx-background-color: #19295e;
+    -fx-background-color: #233c80;
     -fx-text-fill: #fff;
 }
 
 .label {
+    -fx-text-fill: #fff
+}
+
+.textField {
+    -fx-background-color: black;
     -fx-text-fill: #fff;
+}
+
+.table-view {
+    -fx-background-color: #333;
+    -fx-text-fill: #fff;
+}
+
+#menu {
+    -fx-background-color: black;
+    -fx-text-fill: #fff;
+}
+
+#view {
+    -fx-background-color: #fff;
 }
 
 #gridPane {
     -fx-background-color: #333;
+    -fx-text-fill: #fff;
 }
 
+#tableViewContainer {
+    -fx-background-color: #fff;
+    -fx-text-fill: #19295e;
+    -fx-border: 2px solid #19295e;
+}
+
+#insertOptions {
+    -fx-background-color: #19295e;
+    -fx-text-fill: #fff;
+}
+
+#errorBox {
+    -fx-background-color: #19295e;
+    -fx-text-fill: red;
+}

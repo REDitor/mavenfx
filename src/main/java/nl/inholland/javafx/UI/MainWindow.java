@@ -32,8 +32,8 @@ public class MainWindow {
     //Container(s)
     VBox vbxMainContainer;
     VBox vbxTicketView;
-    HBox hbxManageMoviesView;
-    HBox hbxManageShowingsView;
+    VBox vbxManageMoviesView;
+    VBox vbxManageShowingsView;
 
     //Scenes
     Scene scene;
@@ -58,7 +58,7 @@ public class MainWindow {
 
     //region Initiate Window
     private void loadWindow(Stage window) {
-        window.setHeight(960);
+        window.setHeight(700);
         window.setWidth(1280);
         window.setTitle("Fabulous Cinema -- -- Purchase Tickets -- username: " + loggedUser.getUsername());
 
@@ -74,12 +74,9 @@ public class MainWindow {
         addToContainer(vbxTicketView);
 
         scene = new Scene(vbxMainContainer);
+        styleWindow();
 
         setEventHandlers(window);
-
-        //Style + grid assignment
-//        styleWindow();
-//        assignGrid();
 
         //Display elements, scene and window
         window.setScene(scene);
@@ -131,9 +128,9 @@ public class MainWindow {
             @Override
             public void handle(ActionEvent actionEvent) {
                 resetView();
-                hbxManageShowingsView = manageShowingsView.getView();
-                addToContainer(hbxManageShowingsView);
-                hbxManageMoviesView.setVisible(true);
+                vbxManageShowingsView = manageShowingsView.getView();
+                addToContainer(vbxManageShowingsView);
+                vbxManageMoviesView.setVisible(true);
                 //TODO: maybe better to hide instead of removing and adding
             }
         });
@@ -142,8 +139,8 @@ public class MainWindow {
             @Override
             public void handle(ActionEvent actionEvent) {
                 resetView();
-                hbxManageMoviesView = manageMoviesView.getView();
-                addToContainer(hbxManageMoviesView);
+                vbxManageMoviesView = manageMoviesView.getView();
+                addToContainer(vbxManageMoviesView);
             }
         });
 
@@ -158,11 +155,8 @@ public class MainWindow {
     }
 
     private void styleWindow() {
-
-    }
-
-    private void assignGrid() {
-
+        scene.getStylesheets().add("css/style.css");
+        menuBar.setId("menu");
     }
     //endregion
 
