@@ -51,7 +51,7 @@ public class Database {
                         LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
                         movies.get(0),
                         room1.getNumberOfSeats(),
-                        1
+                        room1
                 )
         );
         room1.addShowing(
@@ -59,7 +59,7 @@ public class Database {
                         LocalDateTime.parse("10-10-2021 22:30", dateTimeFormatter),
                         movies.get(1),
                         room1.getNumberOfSeats(),
-                        1
+                        room1
                 )
         );
 
@@ -70,7 +70,7 @@ public class Database {
                         LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
                         movies.get(1),
                         room1.getNumberOfSeats(),
-                        2
+                        room2
                 )
         );
         room2.addShowing(
@@ -78,7 +78,7 @@ public class Database {
                         LocalDateTime.parse("09-10-2021 22:00", dateTimeFormatter),
                         movies.get(0),
                         room1.getNumberOfSeats(),
-                        2
+                        room2
                 )
         );
     }

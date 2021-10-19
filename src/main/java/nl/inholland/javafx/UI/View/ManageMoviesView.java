@@ -12,7 +12,7 @@ public class ManageMoviesView implements View{
 
     @Override
     public VBox getView() {
-        return null;
+        return new VBox();
     }
 
     @Override

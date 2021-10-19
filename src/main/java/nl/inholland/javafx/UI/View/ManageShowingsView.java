@@ -14,7 +14,7 @@ public class ManageShowingsView implements View{
 
     @Override
     public VBox getView() {
-        return null;
+        return new VBox();
     }
 
     @Override

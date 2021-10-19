@@ -34,25 +34,20 @@ public class TicketView implements View {
     MovieShowing selectedShowing;
 
     //region Elements
-    VBox vBoxContainer;
+    VBox vBoxMainContainer;
     Label lblTitle = new Label("Purchase Tickets");
 
     //region MovieShowings/Rooms
-    HBox hbxTableViews;
+    HBox hBoxTableViews;
 
     VBox vBoxRoom1;
     Label lblRoom1;
-    TableView<MovieShowing> tbvRoom1;
+    TableView<MovieShowing> tableViewRoom1;
 
     VBox vBoxRoom2;
     Label lblRoom2;
-    TableView<MovieShowing> tbvRoom2;
+    TableView<MovieShowing> tableViewRoom2;
 
-    TableColumn<MovieShowing, LocalDateTime> colStartTime;
-    TableColumn<MovieShowing, LocalDateTime> colEndTime;
-    TableColumn<MovieShowing, String> colTitle;
-    TableColumn<MovieShowing, Integer> colSeats;
-    TableColumn<MovieShowing, Double> colPrice;
     //endregion
 
     //region SellTicketOptions
@@ -65,7 +60,7 @@ public class TicketView implements View {
     Label lblStartTime;
     Label lblStartTimeResult;
     Label lblNrOfSeats;
-    ChoiceBox<Integer> chbNrOfSeatsResult;
+    ChoiceBox<Integer> choiceBoxNrOfSeatsResult;
     Button btnPurchase;
     Label lblEndTime;
     Label lblEndTimeResult;
@@ -75,7 +70,7 @@ public class TicketView implements View {
     //endregion
 
     //region ErrorMessageBox
-    HBox hbxErrorMessage;
+    HBox hBoxErrorMessage;
     Label lblErrorMessage;
     //endregion
     //endregion
@@ -96,7 +91,7 @@ public class TicketView implements View {
     //region Interface
     @Override
     public VBox getView() {
-        return vBoxContainer;
+        return vBoxMainContainer;
     }
 
     @Override
@@ -105,16 +100,16 @@ public class TicketView implements View {
         setGridPane();
         setErrorBox();
 
-        vBoxContainer = new VBox();
-        vBoxContainer.getChildren().addAll(lblTitle, hbxTableViews, gridPane, hbxErrorMessage); //add all containers to the parent container
+        vBoxMainContainer = new VBox();
+        vBoxMainContainer.getChildren().addAll(lblTitle, hBoxTableViews, gridPane, hBoxErrorMessage); //add all containers to the parent container
     }
 
     @Override
     public void styleView() {
         lblTitle.setStyle("-fx-text-fill: #19295e; -fx-font-size: 16");
-        vBoxContainer.getStylesheets().add("css/style.css");
-        vBoxContainer.setId("view");
-        hbxTableViews.setId("tableViewContainer");
+        vBoxMainContainer.getStylesheets().add("css/style.css");
+        vBoxMainContainer.setId("view");
+        hBoxTableViews.setId("tableViewContainer");
 
         vBoxRoom1.setId("tableView");
         vBoxRoom1.setPadding(new Insets(0, 5, 10, 0));
@@ -125,8 +120,8 @@ public class TicketView implements View {
         vBoxRoom2.setPadding(new Insets(0, 0, 10, 5));
 
         gridPane.setId("insertOptions");
-        hbxErrorMessage.setId("errorBox");
-        hbxErrorMessage.minHeight(30);
+        hBoxErrorMessage.setId("errorBox");
+        hBoxErrorMessage.minHeight(30);
     }
 
     @Override
@@ -137,13 +132,15 @@ public class TicketView implements View {
     @Override
     public void setEventHandlers() {
         //check if selected showing is in room 1
-        tbvRoom1.setOnMouseClicked(e -> {
-            if (tbvRoom1.getSelectionModel().getSelectedItem() != null) {
-                selectedShowing = tbvRoom1.getSelectionModel().getSelectedItem();
+        tableViewRoom1.setOnMouseClicked(e -> {
+            if (tableViewRoom1.getSelectionModel().getSelectedItem() != null) {
+                tableViewRoom2.getSelectionModel().clearSelection();
+                selectedShowing = tableViewRoom1.getSelectionModel().getSelectedItem();
+                loadSelectionInfo(selectedShowing, room1);
             }
         });
 
-        tbvRoom1.setColumnResizePolicy(new Callback<TableView.ResizeFeatures, Boolean>() {
+        tableViewRoom1.setColumnResizePolicy(new Callback<TableView.ResizeFeatures, Boolean>() {
             @Override
             public Boolean call(TableView.ResizeFeatures resizeFeatures) {
                 return true;
@@ -151,16 +148,18 @@ public class TicketView implements View {
         });
 
         //check if selected showing is in room 2
-        tbvRoom2.setOnMouseClicked(e -> {
-            if (tbvRoom2.getSelectionModel().getSelectedItem() != null) {
-                selectedShowing = tbvRoom2.getSelectionModel().getSelectedItem();
+        tableViewRoom2.setOnMouseClicked(e -> {
+            if (tableViewRoom2.getSelectionModel().getSelectedItem() != null) {
+                tableViewRoom1.getSelectionModel().clearSelection();
+                selectedShowing = tableViewRoom2.getSelectionModel().getSelectedItem();
+                loadSelectionInfo(selectedShowing, room2);
             }
         });
 
         btnPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                int numberOfTickets = chbNrOfSeatsResult.getSelectionModel().getSelectedItem();
+                int numberOfTickets = choiceBoxNrOfSeatsResult.getSelectionModel().getSelectedItem();
                 if (selectedShowing != null && (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing))) {
                     sellTickets(selectedShowing, numberOfTickets);
                 }
@@ -170,30 +169,35 @@ public class TicketView implements View {
     //endregion
 
     private void setTableViews() {
-        hbxTableViews = new HBox();
+        hBoxTableViews = new HBox();
 
         vBoxRoom1 = new VBox();
         lblRoom1 = new Label("Room 1");
-        tbvRoom1 = new TableView<>();
+        tableViewRoom1 = new TableView<>();
 
         vBoxRoom2 = new VBox();
         lblRoom2 = new Label("Room 2");
-        tbvRoom2 = new TableView<>();
+        tableViewRoom2 = new TableView<>();
 
-        createTableColumns();
+        createTableColumns(tableViewRoom1);
+        createTableColumns(tableViewRoom2);
 
-        tbvRoom1.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
-        tbvRoom1.setItems(showingsRoom1);
-        vBoxRoom1.getChildren().addAll(lblRoom1, tbvRoom1); //add tableview for room 1 to a container
+        tableViewRoom1.setItems(showingsRoom1);
+        vBoxRoom1.getChildren().addAll(lblRoom1, tableViewRoom1); //add tableview for room 1 to a container
 
-        tbvRoom2.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
-        tbvRoom2.setItems(showingsRoom2);
-        vBoxRoom2.getChildren().addAll(lblRoom2, tbvRoom2); //add tableview for room 2 to a container
+        tableViewRoom2.setItems(showingsRoom2);
+        vBoxRoom2.getChildren().addAll(lblRoom2, tableViewRoom2); //add tableview for room 2 to a container
 
-        hbxTableViews.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
+        hBoxTableViews.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
     }
 
-    private void createTableColumns() {
+    private void createTableColumns(TableView<MovieShowing> tableView) {
+        TableColumn<MovieShowing, LocalDateTime> colStartTime;
+        TableColumn<MovieShowing, LocalDateTime> colEndTime;
+        TableColumn<MovieShowing, String> colTitle;
+        TableColumn<MovieShowing, Integer> colSeats;
+        TableColumn<MovieShowing, Double> colPrice;
+
         colStartTime = new TableColumn<>("Start");
         colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
 
@@ -204,10 +208,19 @@ public class TicketView implements View {
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 
         colSeats = new TableColumn<>("Seats");
-        colSeats.setCellValueFactory(new PropertyValueFactory<>("seats"));
+        colSeats.setCellValueFactory(new PropertyValueFactory<>("numberOfSeats"));
 
         colPrice = new TableColumn<>("Price");
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+        tableView.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
+    }
+
+    private void loadSelectionInfo(MovieShowing showing, Room room) {
+        lblRoomResult.setText(String.format("Room %d", room.getRoomNumber()));
+        lblMovieTitleResult.setText(showing.getTitle());
+        lblStartTimeResult.setText(showing.getStartTime().toString());
+        lblEndTimeResult.setText(showing.getEndTime().toString());
     }
 
     private void setGridPane() {
@@ -225,9 +238,9 @@ public class TicketView implements View {
         lblStartTimeResult = new Label();
         lblNrOfSeats = new Label("No. of seats:");
 
-        chbNrOfSeatsResult = new ChoiceBox<>();
-        chbNrOfSeatsResult.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
-        chbNrOfSeatsResult.setValue(0);
+        choiceBoxNrOfSeatsResult = new ChoiceBox<>();
+        choiceBoxNrOfSeatsResult.getItems().addAll(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        choiceBoxNrOfSeatsResult.setValue(0);
 
         btnPurchase = new Button("Purchase");
         lblEndTime = new Label("End:");
@@ -247,7 +260,7 @@ public class TicketView implements View {
         GridPane.setConstraints(lblStartTime, 0, 1);
         GridPane.setConstraints(lblStartTimeResult, 1, 1);
         GridPane.setConstraints(lblNrOfSeats, 2, 1);
-        GridPane.setConstraints(chbNrOfSeatsResult, 3, 1);
+        GridPane.setConstraints(choiceBoxNrOfSeatsResult, 3, 1);
         GridPane.setConstraints(btnPurchase, 5, 1);
         GridPane.setConstraints(lblEndTime, 0, 2);
         GridPane.setConstraints(lblEndTimeResult, 1, 2);
@@ -257,21 +270,22 @@ public class TicketView implements View {
 
         gridPane.getChildren().addAll(
                 lblRoom, lblRoomResult, lblMovieTitle, lblMovieTitleResult, lblStartTime, lblStartTimeResult,
-                lblNrOfSeats, chbNrOfSeatsResult, btnPurchase, lblEndTime, lblEndTimeResult, lblName, txtNameResult,
+                lblNrOfSeats, choiceBoxNrOfSeatsResult, btnPurchase, lblEndTime, lblEndTimeResult, lblName, txtNameResult,
                 btnClear
         );
     }
 
     private void setErrorBox() {
-        hbxErrorMessage = new HBox();
+        //FIXME: errorbox not showing up
+        hBoxErrorMessage = new HBox();
         lblErrorMessage = new Label();
 
-        hbxErrorMessage.getChildren().add(lblErrorMessage);
+        hBoxErrorMessage.getChildren().add(lblErrorMessage);
     }
 
     private void sellTickets(MovieShowing showing, int numberOfTickets) {
         if (ticketsLeft(numberOfTickets, showing)) {
-            showing.setAvailableTickets(numberOfTickets); //decrement available tickets for showing
+            showing.deductAvailableTickets(numberOfTickets); //decrement available tickets for showing
         }
     }
 

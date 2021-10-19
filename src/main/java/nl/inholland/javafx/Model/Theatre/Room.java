@@ -19,6 +19,9 @@ public class Room {
     public ArrayList<MovieShowing> getShowings() {
         return showings;
     }
+    public void addShowing(MovieShowing showing) {
+        showings.add(showing);
+    }
 
     public Room(int roomNumber, int numberOfSeats) {
         this.roomNumber = roomNumber;
@@ -26,7 +29,5 @@ public class Room {
         this.showings = new ArrayList<>();
     }
 
-    public void addShowing(MovieShowing showing) {
-        showings.add(showing);
-    }
+
 }

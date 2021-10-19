@@ -3,7 +3,6 @@ package nl.inholland.javafx.UI;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -61,19 +60,29 @@ public class MainWindow {
     //region Initiate Window
     private void loadWindow(Stage window) {
         window.setHeight(650);
-        window.setWidth(1280);
+        window.setWidth(1285);
         window.setTitle("Fabulous Cinema -- -- Purchase Tickets -- username: " + loggedUser.getUsername());
 
         //Create elements based on user permission
         instantiateMenu(loggedUser);
 
-        vbxMainContainer = new VBox();
-        vbxMainContainer.getChildren().add(menuBar);
+
 
         //initialize ticketView as main page/scene
         vbxTicketView = ticketView.getView();
+        vbxManageShowingsView = manageShowingsView.getView();
+        vbxManageMoviesView = manageMoviesView.getView();
         vbxTicketView.setPadding(new Insets(10));
-        addToContainer(vbxTicketView);
+        vbxManageShowingsView.setPadding(new Insets(10));
+        vbxManageMoviesView.setPadding(new Insets(10));
+        hideViews();
+
+        vbxTicketView.setVisible(true);
+
+        // addToMainContainer(vbxTicketView);
+
+        vbxMainContainer = new VBox();
+        vbxMainContainer.getChildren().addAll(menuBar, vbxTicketView, vbxManageMoviesView, vbxManageShowingsView);
 
         scene = new Scene(vbxMainContainer);
         styleWindow();
@@ -114,15 +123,16 @@ public class MainWindow {
         menuBar.getMenus().addAll(sellTicketsMenu, helpMenu, logoutMenu);
     }
 
-    private void addToContainer(Node node) {
-        if (!vbxMainContainer.getChildren().contains(node)) {
-            vbxMainContainer.getChildren().add(node);
-        }
-    }
+    // private void addToMainContainer(Node node) {
+    //     if (!vbxMainContainer.getChildren().contains(node)) {
+    //         vbxMainContainer.getChildren().add(node);
+    //     }
+    // }
 
-    private void resetView() {
-        vbxMainContainer.getChildren().removeAll();
-        vbxMainContainer.getChildren().add(menuBar);
+    private void hideViews() {
+        vbxTicketView.setVisible(false);
+        vbxManageMoviesView.setVisible(false);
+        vbxManageShowingsView.setVisible(false);
     }
 
     private void setEventHandlers(Stage window) {
@@ -130,9 +140,9 @@ public class MainWindow {
             manageShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    resetView();
+                    hideViews();
                     vbxManageShowingsView = manageShowingsView.getView();
-                    addToContainer(vbxManageShowingsView);
+                    // addToMainContainer(vbxManageShowingsView);
                     vbxManageMoviesView.setVisible(true);
                 }
             });
@@ -142,9 +152,10 @@ public class MainWindow {
             manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    resetView();
+                    hideViews();
                     vbxManageMoviesView = manageMoviesView.getView();
-                    addToContainer(vbxManageMoviesView);
+                    vbxManageMoviesView.setVisible(true);
+                    // addToMainContainer(vbxManageMoviesView);
                 }
             });
         }
@@ -152,9 +163,10 @@ public class MainWindow {
         sellTicketsMenu.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                resetView();
+                hideViews();
                 vbxTicketView = ticketView.getView();
-                addToContainer(vbxTicketView);
+                vbxTicketView.setVisible(true);
+                // addToMainContainer(vbxTicketView);
             }
         });
     }
