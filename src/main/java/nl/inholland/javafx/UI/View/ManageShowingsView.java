@@ -6,6 +6,9 @@ import nl.inholland.javafx.Data.Database;
 public class ManageShowingsView {
     Database db;
 
+    //region Elements
+
+    //endregion
 
     public ManageShowingsView(Database db) {
         this.db = db;

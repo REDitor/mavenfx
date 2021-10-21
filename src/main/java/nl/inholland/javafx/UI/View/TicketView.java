@@ -10,8 +10,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Popup;
-import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import nl.inholland.javafx.Data.Database;
@@ -19,7 +17,6 @@ import nl.inholland.javafx.Exception.NoNameException;
 import nl.inholland.javafx.Exception.NoShowingSelectedException;
 import nl.inholland.javafx.Exception.SoldOutException;
 import nl.inholland.javafx.Exception.ZeroTicketsException;
-import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.Theatre.Ticket;
@@ -29,21 +26,22 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+
 public class TicketView {
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     Database db;
     Stage window;
-    //TODO: Put duplicates into mainwindow class
-
-    //FIXME: Format tableview items correctly
 
     ObservableList<MovieShowing> showingsRoom1;
     ObservableList<MovieShowing> showingsRoom2;
     List<Ticket> soldTickets;
-    Room room1;
-    Room room2;
     Room selectedRoom;
     MovieShowing selectedShowing;
+
+    Room room1;
+    Room room2;
 
     //region Elements
     VBox vBoxMainContainer;
@@ -103,6 +101,7 @@ public class TicketView {
         setEventHandlers();
     }
 
+    //region Inherited
     public VBox getView() {
         return vBoxMainContainer;
     }
@@ -189,8 +188,7 @@ public class TicketView {
                         throw new NoShowingSelectedException();
                     }
                     if (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing)) {
-
-                        sellTickets(selectedShowing, numberOfTickets, txtNameResult.getText());
+                        confirmPurchase(selectedShowing, numberOfTickets, txtNameResult.getText());
                         window.sizeToScene();
                     }
                 } catch (NoShowingSelectedException | SoldOutException | ZeroTicketsException | NoNameException rte) {
@@ -339,45 +337,52 @@ public class TicketView {
 
         hBoxInfoMessage.getChildren().add(lblInfoMessage);
     }
+    //endregion
+
+
+    //region TicketView
+    private void confirmPurchase(MovieShowing showing, int numberOfTickets, String name) {
+        if (!ticketsLeft(numberOfTickets, showing))
+            throw new SoldOutException();
+
+        else {
+            if (numberOfTickets < 1)
+                throw new ZeroTicketsException();
+
+            if (name.length() < 1)
+                throw new NoNameException();
+
+            int result = showConfirmDialog(
+                    null,
+                    String.format("Are you sure you want to sell %d tickets%nfor Movie '%s'%nto %s", numberOfTickets, selectedShowing.getTitle(), name),
+                    "Confirm Transaction",
+                    YES_NO_OPTION
+            );
+
+            if (result == YES_NO_OPTION)
+                sellTickets(showing, numberOfTickets, name);
+
+            else
+                lblInfoMessage.setText("[Purchase Canceled]");
+        }
+    }
 
     private void sellTickets(MovieShowing showing, int numberOfTickets, String name) {
-        if (!ticketsLeft(numberOfTickets, showing)) {
-            throw new SoldOutException();
-        } else {
-            if (numberOfTickets < 1) {
-                throw new ZeroTicketsException();
-            }
-
-            if (name.length() < 1) {
-                throw new NoNameException();
-            }
-            showing.deductAvailableTickets(numberOfTickets); //decrement available tickets for showing
-            Ticket ticket = null;
-            for (int i = 0; i < numberOfTickets; i++) {
-                ticket = new Ticket(
-                        selectedRoom.getRoomNumber(),
-                        selectedShowing.getStartTime(),
-                        selectedShowing.getEndTime(),
-                        selectedShowing.getTitle(),
-                        txtNameResult.getText()
-                );
-                soldTickets.add(ticket);
-            }
-            lblInfoMessage.setStyle("-fx-text-fill: #fff");
-            lblInfoMessage.setText(String.format(
-                    "Successfully sold tickets to %s:%nAmount: %d%nMovie: %s%nRoom: Room %d",
-                    txtNameResult.getText(), numberOfTickets, ticket.getTitle(), ticket.getRoomNumber()));
+        showing.deductAvailableTickets(numberOfTickets); //decrement available tickets for showing
+        Ticket ticket = null;
+        for (int i = 0; i < numberOfTickets; i++) {
+            ticket = new Ticket(selectedRoom.getRoomNumber(), selectedShowing.getStartTime(),
+                    selectedShowing.getEndTime(), selectedShowing.getTitle(), name);
+            soldTickets.add(ticket);
         }
+        lblInfoMessage.setStyle("-fx-text-fill: #fff");
+        lblInfoMessage.setText(String.format(
+                "Successfully sold tickets to %s:%nAmount: %d%nMovie: %s%nRoom: Room %d",
+                txtNameResult.getText(), numberOfTickets, ticket.getTitle(), ticket.getRoomNumber()));
     }
 
     private boolean ticketsLeft(int numberOfTickets, MovieShowing showing) {
         return numberOfTickets <= showing.getAvailableTickets(); //check if tickets are available
     }
-
-    private PopupWindow getDialog() {
-        final PopupWindow dialog = new Popup();
-        dialog.getOwnerNode();
-        VBox vBoxDialog = new VBox();
-        vBoxDialog.getChildren()
-    }
+    //endregion
 }
