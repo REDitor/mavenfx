@@ -22,6 +22,9 @@ public class Room {
     public void addShowing(MovieShowing showing) {
         showings.add(showing);
     }
+    public Duration getRoomBreak() {
+        return roomBreak;
+    }
 
     public Room(int roomNumber, int numberOfSeats) {
         this.roomNumber = roomNumber;

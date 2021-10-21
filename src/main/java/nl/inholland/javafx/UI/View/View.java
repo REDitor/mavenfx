@@ -190,7 +190,9 @@ public abstract class View {
 
     abstract void setEventHandlers();
 
-    abstract void loadSectionInfo();
+    protected void loadSectionInfo() {
+
+    }
 
     abstract void clearFields();
 

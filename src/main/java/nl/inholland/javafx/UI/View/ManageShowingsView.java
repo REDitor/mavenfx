@@ -11,16 +11,20 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Exception.*;
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.chrono.ChronoPeriod;
+import java.time.temporal.ValueRange;
 
 public class ManageShowingsView extends View {
     Movie selectedMovie;
     Room selectedRoom;
-    String selectedDateTime;
+    LocalDateTime selectedDateTime;
 
     //region ManageShowingsView Elements
     //region gridPane
@@ -99,11 +103,19 @@ public class ManageShowingsView extends View {
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 selectedMovie = choiceBoxMovieResult.getSelectionModel().getSelectedItem();
                 lblPriceResult.setText(String.format("%.2f", selectedMovie.getPrice()));
-                lblEndTimeResult.setText(LocalDateTime.parse());
             }
         });
 
-        StringProperty dateProperty =  datePickerStartDateResult.getEditor().getText();
+        StringProperty dateProperty = datePickerStartDateResult.getEditor().textProperty();
+        dateProperty.addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                selectedDateTime = LocalDateTime.parse(datePickerStartDateResult.getEditor().getText() +
+                        " " + txtStartTimeResult.getText(), dateTimeFormatter);
+                LocalDateTime endTimeResult = selectedDateTime.plusMinutes(selectedMovie.getDuration().toMinutes());
+                lblEndTimeResult.setText(endTimeResult.format(dateTimeFormatter));
+            }
+        });
 
         choiceBoxRoomResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -116,39 +128,41 @@ public class ManageShowingsView extends View {
         btnAddShowing.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                selectedDateTime = datePickerStartDateResult.getValue() + " " + txtStartTimeResult.getText();
-                selectedRoom.addShowing(
-                        new MovieShowing(
-                                LocalDateTime.parse(selectedDateTime, dateTimeFormatter),
-                                selectedMovie,
-                                room1.getNumberOfSeats(),
-                                selectedRoom
-                        )
-                );
+                try {
+                    MovieShowing showing = new MovieShowing(selectedDateTime, selectedMovie,
+                            selectedRoom.getNumberOfSeats(), selectedRoom);
+                    checkShowingInput(showing, selectedRoom, selectedMovie);
+                    selectedRoom.addShowing(
+                            new MovieShowing(
+                                    selectedDateTime,
+                                    selectedMovie,
+                                    selectedRoom.getNumberOfSeats(),
+                                    selectedRoom
+                            )
+                    );
+                } catch (NoMovieSelectedException | IncorrectTimeFormatException
+                        | NoRoomSelectedException | OverlappingShowingException rte) {
+                    lblInfoMessage.setStyle("-fx-text-fill: red");
+                    lblInfoMessage.setText(rte.getMessage());
+                }
             }
         });
 
         this.btnClear.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                choiceBoxMovieResult.setValue(null);
-                datePickerStartDateResult.setValue(null);
-                txtStartTimeResult.setText(null);
-                choiceBoxRoomResult.setValue(null);
-
+                clearFields();
                 gridPane.setVisible(false);
             }
         });
     }
 
     @Override
-    void loadSectionInfo() {
-
-    }
-
-    @Override
     void clearFields() {
-
+        choiceBoxMovieResult.setValue(null);
+        datePickerStartDateResult.setValue(null);
+        txtStartTimeResult.setText(null);
+        choiceBoxRoomResult.setValue(null);
     }
 
     private void instantiateElements() {
@@ -157,7 +171,6 @@ public class ManageShowingsView extends View {
             choiceBoxMovieResult.getItems().add(movie);
         }
 
-        instantiateElements();
         lblStartDateTime = new Label("Start:");
         datePickerStartDateResult = new DatePicker();
         txtStartTimeResult = new TextField();
@@ -173,4 +186,30 @@ public class ManageShowingsView extends View {
         btnClear = new Button("Clear");
     }
 
+    private void checkShowingInput(MovieShowing showing, Room room, Movie movie) {
+        if (movie == null)
+            throw new NoMovieSelectedException();
+
+        if (datePickerStartDateResult.getEditor() == null)
+            throw new NoDateTimeSelectedException();
+
+        if (room == null)
+            throw new NoRoomSelectedException();
+
+        LocalDateTime newStart = showing.getStartTime().minusMinutes(room.getRoomBreak().toMinutes());
+        LocalDateTime newEnd = showing.getEndTime().plusMinutes(room.getRoomBreak().toMinutes());
+
+        for (MovieShowing existingShowing : room.getShowings()) {
+            LocalDateTime existingStart = existingShowing.getStartTime().minusMinutes(room.getRoomBreak().toMinutes());
+            LocalDateTime existingEnd = existingShowing.getEndTime().plusMinutes(room.getRoomBreak().toMinutes());
+
+            if (isOverlapping(newStart, newEnd, existingStart, existingEnd)) {
+                throw new OverlappingShowingException();
+            }
+        }
+    }
+
+    private boolean isOverlapping(LocalDateTime newStart, LocalDateTime newEnd, LocalDateTime existStart, LocalDateTime existEnd) {
+        return newStart.isBefore(existEnd) && existStart.isBefore(newEnd);
+    }
 }
