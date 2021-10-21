@@ -103,7 +103,7 @@ public class ManageShowingsView extends View {
             }
         });
 
-        StringProperty dateProperty = datePickerStartDateResult.getText;
+        StringProperty dateProperty =  datePickerStartDateResult.getEditor().getText();
 
         choiceBoxRoomResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
