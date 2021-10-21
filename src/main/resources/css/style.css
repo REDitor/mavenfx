@@ -47,7 +47,11 @@ Root {
     -fx-text-fill: #fff;
 }
 
-#errorBox {
+#errorLabel {
+    -fx-text-fill: red;
+}
+
+#infoBox {
     -fx-background-color: #19295e;
     -fx-text-fill: red;
 }

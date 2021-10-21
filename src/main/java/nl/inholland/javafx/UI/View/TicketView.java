@@ -10,18 +10,29 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
+import javafx.stage.PopupWindow;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Exception.NoNameException;
+import nl.inholland.javafx.Exception.NoShowingSelectedException;
+import nl.inholland.javafx.Exception.SoldOutException;
+import nl.inholland.javafx.Exception.ZeroTicketsException;
+import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.Theatre.Ticket;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TicketView {
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     Database db;
+    Stage window;
     //TODO: Put duplicates into mainwindow class
 
     //FIXME: Format tableview items correctly
@@ -50,6 +61,7 @@ public class TicketView {
     TableView<MovieShowing> tableViewRoom2;
 
     //endregion
+    VBox vBoxSellContainer;
 
     //region SellTicketOptions
     GridPane gridPane;
@@ -71,12 +83,14 @@ public class TicketView {
     //endregion
 
     //region ErrorMessageBox
-    HBox hBoxErrorMessage;
-    Label lblErrorMessage;
+    HBox hBoxInfoMessage;
+    Label lblInfoMessage;
     //endregion
     //endregion
 
-    public TicketView(Database db) {
+    public TicketView(Database db, Stage window) {
+        this.window = window;
+
         this.db = db;
         room1 = db.getRoom1();
         room2 = db.getRoom2();
@@ -89,26 +103,26 @@ public class TicketView {
         setEventHandlers();
     }
 
-    //region Interface
-
     public VBox getView() {
         return vBoxMainContainer;
     }
 
-
     public void assignSections() {
         setTableViews();
         setGridPane();
-        setErrorBox();
+        setInfoBox();
+
+        vBoxSellContainer = new VBox();
+        vBoxSellContainer.getChildren().addAll(gridPane, hBoxInfoMessage);
 
         vBoxMainContainer = new VBox();
-        vBoxMainContainer.getChildren().addAll(lblTitle, hBoxTableViews, gridPane, hBoxErrorMessage); //add all containers to the parent container
+        vBoxMainContainer.getChildren().addAll(lblTitle, hBoxTableViews, vBoxSellContainer); //add all containers to the parent container
     }
-
 
     public void styleView() {
         lblTitle.setStyle("-fx-text-fill: #19295e; -fx-font-size: 16");
         vBoxMainContainer.getStylesheets().add("css/style.css");
+        vBoxMainContainer.setPadding(new Insets(10));
         vBoxMainContainer.setId("view");
         hBoxTableViews.setId("tableViewContainer");
 
@@ -120,14 +134,12 @@ public class TicketView {
         vBoxRoom2.setMinWidth(625);
         vBoxRoom2.setPadding(new Insets(0, 0, 10, 5));
 
+        vBoxSellContainer.setSpacing(10);
         gridPane.setId("insertOptions");
-        hBoxErrorMessage.setId("errorBox");
-        hBoxErrorMessage.minHeight(30);
-    }
+        hBoxInfoMessage.setId("infoBox");
 
-
-    public void refreshView() {
-
+        //set sellOptions to invisible by default
+        gridPane.setVisible(false);
     }
 
     private void setSelectedRoom(TableView tableView) {
@@ -138,11 +150,15 @@ public class TicketView {
         }
     }
 
+    private void removeSelection(TableView tableView) {
+        tableView.getSelectionModel().clearSelection();
+    }
+
     public void setEventHandlers() {
         tableViewRoom1.setOnMouseClicked(e -> {
             setSelectedRoom(tableViewRoom1);
             if (tableViewRoom1.getSelectionModel().getSelectedItem() != null) {
-                tableViewRoom2.getSelectionModel().clearSelection();
+                removeSelection(tableViewRoom2);
                 selectedShowing = tableViewRoom1.getSelectionModel().getSelectedItem();
                 loadSelectionInfo(selectedShowing, room1);
             }
@@ -158,7 +174,7 @@ public class TicketView {
         tableViewRoom2.setOnMouseClicked(e -> {
             setSelectedRoom(tableViewRoom2);
             if (tableViewRoom2.getSelectionModel().getSelectedItem() != null) {
-                tableViewRoom1.getSelectionModel().clearSelection();
+                removeSelection(tableViewRoom1);
                 selectedShowing = tableViewRoom2.getSelectionModel().getSelectedItem();
                 loadSelectionInfo(selectedShowing, room2);
             }
@@ -167,14 +183,44 @@ public class TicketView {
         btnPurchase.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                int numberOfTickets = choiceBoxNrOfSeatsResult.getSelectionModel().getSelectedItem();
-                if (selectedShowing != null && (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing))) {
-                    sellTickets(selectedShowing, numberOfTickets);
+                try {
+                    int numberOfTickets = choiceBoxNrOfSeatsResult.getSelectionModel().getSelectedItem();
+                    if (selectedShowing == null) {
+                        throw new NoShowingSelectedException();
+                    }
+                    if (showingsRoom1.contains(selectedShowing) || showingsRoom2.contains(selectedShowing)) {
+
+                        sellTickets(selectedShowing, numberOfTickets, txtNameResult.getText());
+                        window.sizeToScene();
+                    }
+                } catch (NoShowingSelectedException | SoldOutException | ZeroTicketsException | NoNameException rte) {
+                    lblInfoMessage.setStyle("-fx-text-fill: red");
+                    lblInfoMessage.setText(rte.getMessage());
                 }
             }
         });
+
+        btnClear.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                clearFields();
+                removeSelection(tableViewRoom1);
+                removeSelection(tableViewRoom2);
+                gridPane.setVisible(false);
+                window.sizeToScene();
+            }
+        });
     }
-    //endregion
+
+    private void clearFields() {
+        lblRoomResult.setText(null);
+        lblMovieTitleResult.setText(null);
+        lblStartTimeResult.setText(null);
+        choiceBoxNrOfSeatsResult.setValue(0);
+        lblEndTimeResult.setText(null);
+        txtNameResult.clear();
+        lblInfoMessage.setText(null);
+    }
 
     private void setTableViews() {
         hBoxTableViews = new HBox();
@@ -225,6 +271,8 @@ public class TicketView {
     }
 
     private void loadSelectionInfo(MovieShowing showing, Room room) {
+        gridPane.setVisible(true);
+
         lblRoomResult.setText(String.format("Room %d", room.getRoomNumber()));
         lblMovieTitleResult.setText(showing.getTitle());
         lblStartTimeResult.setText(showing.getStartTime().toString());
@@ -264,7 +312,7 @@ public class TicketView {
         GridPane.setConstraints(lblRoom, 0, 0);
         GridPane.setConstraints(lblRoomResult, 1, 0);
         GridPane.setConstraints(lblMovieTitle, 2, 0);
-        GridPane.setConstraints(lblMovieTitleResult, 3, 0);
+        GridPane.setConstraints(lblMovieTitleResult, 3, 0, 3, 1);
         GridPane.setConstraints(lblStartTime, 0, 1);
         GridPane.setConstraints(lblStartTimeResult, 1, 1);
         GridPane.setConstraints(lblNrOfSeats, 2, 1);
@@ -283,30 +331,53 @@ public class TicketView {
         );
     }
 
-    private void setErrorBox() {
-        //FIXME: errorbox not showing up
-        hBoxErrorMessage = new HBox();
-        lblErrorMessage = new Label();
+    private void setInfoBox() {
+        hBoxInfoMessage = new HBox();
+        hBoxInfoMessage.setPadding(new Insets(10));
+        hBoxInfoMessage.setSpacing(20);
+        lblInfoMessage = new Label();
 
-        hBoxErrorMessage.getChildren().add(lblErrorMessage);
+        hBoxInfoMessage.getChildren().add(lblInfoMessage);
     }
 
-    private void sellTickets(MovieShowing showing, int numberOfTickets) {
-        if (ticketsLeft(numberOfTickets, showing)) {
+    private void sellTickets(MovieShowing showing, int numberOfTickets, String name) {
+        if (!ticketsLeft(numberOfTickets, showing)) {
+            throw new SoldOutException();
+        } else {
+            if (numberOfTickets < 1) {
+                throw new ZeroTicketsException();
+            }
+
+            if (name.length() < 1) {
+                throw new NoNameException();
+            }
             showing.deductAvailableTickets(numberOfTickets); //decrement available tickets for showing
+            Ticket ticket = null;
             for (int i = 0; i < numberOfTickets; i++) {
-                Ticket ticket = new Ticket(
+                ticket = new Ticket(
                         selectedRoom.getRoomNumber(),
                         selectedShowing.getStartTime(),
                         selectedShowing.getEndTime(),
-                        selectedShowing.getTitle()
+                        selectedShowing.getTitle(),
+                        txtNameResult.getText()
                 );
                 soldTickets.add(ticket);
             }
+            lblInfoMessage.setStyle("-fx-text-fill: #fff");
+            lblInfoMessage.setText(String.format(
+                    "Successfully sold tickets to %s:%nAmount: %d%nMovie: %s%nRoom: Room %d",
+                    txtNameResult.getText(), numberOfTickets, ticket.getTitle(), ticket.getRoomNumber()));
         }
     }
 
     private boolean ticketsLeft(int numberOfTickets, MovieShowing showing) {
         return numberOfTickets <= showing.getAvailableTickets(); //check if tickets are available
+    }
+
+    private PopupWindow getDialog() {
+        final PopupWindow dialog = new Popup();
+        dialog.getOwnerNode();
+        VBox vBoxDialog = new VBox();
+        vBoxDialog.getChildren()
     }
 }

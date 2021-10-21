@@ -19,8 +19,6 @@ import nl.inholland.javafx.UI.View.ManageMoviesView;
 import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
 
-import javax.swing.text.View;
-
 public class MainWindow {
     Database db;
     User loggedUser;
@@ -51,37 +49,30 @@ public class MainWindow {
         this.db = db;
         this.loggedUser = loggedUser;
 
-        ticketView = new TicketView(db);
+        Stage window = new Stage();
+
+        ticketView = new TicketView(db, window);
         manageMoviesView = new ManageMoviesView(db);
         manageShowingsView = new ManageShowingsView(db);
 
-        Stage window = new Stage();
         loadWindow(window);
     }
 
     //region Initiate Window
     private void loadWindow(Stage window) {
-        window.setHeight(650);
-        window.setWidth(1285);
+        window.sizeToScene();
         window.setTitle("Fabulous Cinema -- -- Purchase Tickets -- username: " + loggedUser.getUsername());
 
         //Create elements based on user permission
         instantiateMenu(loggedUser);
 
-
-
         //initialize ticketView as main page/scene
         vbxTicketView = ticketView.getView();
         vbxManageShowingsView = manageShowingsView.getView();
         vbxManageMoviesView = manageMoviesView.getView();
-        vbxTicketView.setPadding(new Insets(10));
-        vbxManageShowingsView.setPadding(new Insets(10));
-        vbxManageMoviesView.setPadding(new Insets(10));
         hideViews();
 
         vbxTicketView.setVisible(true);
-
-        // addToMainContainer(vbxTicketView);
 
         vbxMainContainer = new VBox();
         vbxMainContainer.getChildren().addAll(menuBar, vbxTicketView, vbxManageMoviesView, vbxManageShowingsView);
@@ -94,10 +85,6 @@ public class MainWindow {
         //Display elements, scene and window
         window.setScene(scene);
         window.show();
-    }
-
-    private void refreshWindow() {
-
     }
 
     private void instantiateMenu(User loggedUser) {
@@ -129,12 +116,6 @@ public class MainWindow {
         menuBar.getMenus().addAll(helpMenu, logoutMenu);
     }
 
-    // private void addToMainContainer(Node node) {
-    //     if (!vbxMainContainer.getChildren().contains(node)) {
-    //         vbxMainContainer.getChildren().add(node);
-    //     }
-    // }
-
     private void hideViews() {
         vbxTicketView.setVisible(false);
         vbxManageMoviesView.setVisible(false);
@@ -148,7 +129,6 @@ public class MainWindow {
                 public void handle(ActionEvent actionEvent) {
                     hideViews();
                     vbxManageShowingsView = manageShowingsView.getView();
-                    // addToMainContainer(vbxManageShowingsView);
                     vbxManageMoviesView.setVisible(true);
                 }
             });
@@ -161,12 +141,9 @@ public class MainWindow {
                     hideViews();
                     vbxManageMoviesView = manageMoviesView.getView();
                     vbxManageMoviesView.setVisible(true);
-                    // addToMainContainer(vbxManageMoviesView);
                 }
             });
         }
-
-
 
         sellTicketsItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override

@@ -12,7 +12,7 @@ public class ManageShowingsView {
     }
 
     public VBox getView() {
-
+        return new VBox(); //remove
     }
 
 

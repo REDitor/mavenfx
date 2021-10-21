@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Exception.IncorrectPasswordException;
+import nl.inholland.javafx.Exception.UserNotFoundException;
 import nl.inholland.javafx.Model.User.User;
 
 import java.util.List;
@@ -38,7 +40,7 @@ public class LoginWindow {
 
     //region Initiate Window
     private void loadWindow(Stage window) {
-        window.setHeight(200);
+        window.setHeight(175);
         window.setWidth(260);
         window.setTitle("Fabulous Cinema -- Login");
 
@@ -82,7 +84,7 @@ public class LoginWindow {
         GridPane.setConstraints(lblPassword, 0, 1);
         GridPane.setConstraints(pwfPassword, 1, 1);
         GridPane.setConstraints(btnLogin, 0, 2);
-        GridPane.setConstraints(lblErrorMessage, 0, 3, 1, 3);
+        GridPane.setConstraints(lblErrorMessage, 0, 3, 3, 1);
 
         gridPane.getChildren().addAll(lblUsername, txtUsername, lblPassword,
                 pwfPassword, btnLogin, lblErrorMessage);
@@ -93,7 +95,9 @@ public class LoginWindow {
         txtUsernameProperty.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                lblErrorMessage.setVisible(false);
+                if (txtUsername.getText().length() > 0) {
+                    lblErrorMessage.setVisible(false);
+                }
             }
         });
 
@@ -109,31 +113,29 @@ public class LoginWindow {
             @Override
             public void handle(ActionEvent actionEvent) {
                 List<User> dbUsers = db.getUsers();
-//                try {
-//
-//                } catch(UserNotFoundException | IncorrectPasswordException e) {
-//                    lblErrorMessage.setVisible(true);
-//                    lblErrorMessage.setText(e.getMessage());
-//                }
-                for (User user : dbUsers) {
-                    //check if user exists in database
-                    if (txtUsername.getText().equals(user.getUsername())) {
-                        //check for correct password
-                        if (pwfPassword.getText().equals(user.getPassword())) {
-                            MainWindow mainWindow = new MainWindow(db, user);
-                            loginWindow.close();
-                            return;
-                        }else {
-                            lblErrorMessage.setText("Incorrect Password...");
-                            lblErrorMessage.setVisible(true);
-                            pwfPassword.clear();
+                try {
+                    for (User user : dbUsers) {
+                        //check if user exists in database
+                        if (txtUsername.getText().equals(user.getUsername())) {
+                            //check for correct password
+                            if (pwfPassword.getText().equals(user.getPassword())) {
+                                MainWindow mainWindow = new MainWindow(db, user);
+                                loginWindow.close();
+                                return;
+                            } else {
+                                pwfPassword.clear();
+                                pwfPassword.requestFocus();
+                                throw new IncorrectPasswordException();
+                            }
                         }
                     }
+                    txtUsername.clear();
+                    pwfPassword.clear();
+                    throw new UserNotFoundException();
+                } catch (UserNotFoundException | IncorrectPasswordException rte) {
+                    lblErrorMessage.setVisible(true);
+                    lblErrorMessage.setText(rte.getMessage());
                 }
-                lblErrorMessage.setText("User not found");
-                lblErrorMessage.setVisible(true);
-                txtUsername.clear();
-                pwfPassword.clear();
             }
         });
     }
