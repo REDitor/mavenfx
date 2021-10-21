@@ -18,15 +18,16 @@ import nl.inholland.javafx.Model.User.User;
 import nl.inholland.javafx.UI.View.ManageMoviesView;
 import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
+import nl.inholland.javafx.UI.View.View;
 
 public class MainWindow {
     Database db;
     User loggedUser;
 
     //region Views
-    TicketView ticketView;
-    ManageMoviesView manageMoviesView;
-    ManageShowingsView manageShowingsView;
+    View ticketView;
+    View manageMoviesView;
+    View manageShowingsView;
     //endregion
 
     //region Elements
@@ -51,9 +52,9 @@ public class MainWindow {
 
         Stage window = new Stage();
 
-        ticketView = new TicketView(db, window);
-        manageMoviesView = new ManageMoviesView(db);
-        manageShowingsView = new ManageShowingsView(db);
+        ticketView = new TicketView();
+        manageMoviesView = new ManageMoviesView();
+        manageShowingsView = new ManageShowingsView(db, window);
 
         loadWindow(window);
     }

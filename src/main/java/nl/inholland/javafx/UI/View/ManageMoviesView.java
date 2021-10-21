@@ -1,31 +1,20 @@
 package nl.inholland.javafx.UI.View;
 
 import javafx.scene.layout.VBox;
-import nl.inholland.javafx.Data.Database;
 
-public class ManageMoviesView {
-    Database db;
+public class ManageMoviesView extends View {
 
-    public ManageMoviesView(Database db) {
-        this.db = db;
+    @Override
+    public void setInitialNodes() {
+
     }
 
+    @Override
     public VBox getView() {
-        return new VBox();
+        return null;
     }
 
-    public void assignSections() {
-
-    }
-
-    public void styleView() {
-
-    }
-
-    public void refreshView() {
-
-    }
-
+    @Override
     public void setEventHandlers() {
 
     }

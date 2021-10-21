@@ -29,5 +29,8 @@ public class Room {
         this.showings = new ArrayList<>();
     }
 
-
+    @Override
+    public String toString() {
+        return "Room " + roomNumber;
+    }
 }
