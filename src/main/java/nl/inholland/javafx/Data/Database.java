@@ -108,7 +108,7 @@ public class Database {
             }
 
         } catch (FileNotFoundException fnfe) {
-            //TODO: implement throwing
+            //TODO: messagedialog?
         } catch (IOException ioe) {
             //...
         }

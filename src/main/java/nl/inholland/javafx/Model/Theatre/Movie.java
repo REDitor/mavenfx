@@ -16,4 +16,6 @@ public class Movie {
         this.price = price;
         this.duration = duration;
     }
+
+
 }

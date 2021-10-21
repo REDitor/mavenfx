@@ -3,6 +3,7 @@ package nl.inholland.javafx.UI;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -26,7 +27,7 @@ public class MainWindow {
 
     //region Views
     View ticketView;
-    View manageMoviesView;
+    // View manageMoviesView;
     View manageShowingsView;
     //endregion
 
@@ -34,8 +35,9 @@ public class MainWindow {
     //Container(s)
     VBox vbxMainContainer;
     VBox vbxTicketView;
-    VBox vbxManageMoviesView;
+    // VBox vbxManageMoviesView;
     VBox vbxManageShowingsView;
+
 
     //Scenes
     Scene scene;
@@ -52,8 +54,8 @@ public class MainWindow {
 
         Stage window = new Stage();
 
-        ticketView = new TicketView();
-        manageMoviesView = new ManageMoviesView();
+        ticketView = new TicketView(db, window);
+        // manageMoviesView = new ManageMoviesView(db, window);
         manageShowingsView = new ManageShowingsView(db, window);
 
         loadWindow(window);
@@ -62,21 +64,20 @@ public class MainWindow {
     //region Initiate Window
     private void loadWindow(Stage window) {
         window.sizeToScene();
-        window.setTitle("Fabulous Cinema -- -- Purchase Tickets -- username: " + loggedUser.getUsername());
 
         //Create elements based on user permission
         instantiateMenu(loggedUser);
 
         //initialize ticketView as main page/scene
+
         vbxTicketView = ticketView.getView();
         vbxManageShowingsView = manageShowingsView.getView();
-        vbxManageMoviesView = manageMoviesView.getView();
-        hideViews();
 
-        vbxTicketView.setVisible(true);
-
+        // vbxManageMoviesView = manageMoviesView.getView();
         vbxMainContainer = new VBox();
-        vbxMainContainer.getChildren().addAll(menuBar, vbxTicketView, vbxManageMoviesView, vbxManageShowingsView);
+        vbxMainContainer.getChildren().addAll(menuBar, vbxTicketView, vbxManageShowingsView);
+
+        showSelectedView(vbxTicketView);
 
         scene = new Scene(vbxMainContainer);
         styleWindow();
@@ -119,8 +120,11 @@ public class MainWindow {
 
     private void hideViews() {
         vbxTicketView.setVisible(false);
-        vbxManageMoviesView.setVisible(false);
+        vbxTicketView.setManaged(false);
+        // vbxManageMoviesView.setVisible(false);
+        //...
         vbxManageShowingsView.setVisible(false);
+        vbxManageShowingsView.setManaged(false);
     }
 
     private void setEventHandlers(Stage window) {
@@ -128,32 +132,34 @@ public class MainWindow {
             manageShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    hideViews();
-                    vbxManageShowingsView = manageShowingsView.getView();
-                    vbxManageMoviesView.setVisible(true);
+                    showSelectedView(vbxManageShowingsView);
                 }
             });
         }
 
-        if (manageShowingsItem != null) {
-            manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent actionEvent) {
-                    hideViews();
-                    vbxManageMoviesView = manageMoviesView.getView();
-                    vbxManageMoviesView.setVisible(true);
-                }
-            });
-        }
+        // if (manageMoviesItem != null) {
+        //     manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
+        //         @Override
+        //         public void handle(ActionEvent actionEvent) {
+        //             hideViews();
+        //             vbxManageMoviesView = manageMoviesView.getView();
+        //             vbxManageMoviesView.setVisible(true);
+        //         }
+        //     });
+        // }
 
         sellTicketsItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                hideViews();
-                vbxTicketView = ticketView.getView();
-                vbxTicketView.setVisible(true);
+                showSelectedView(vbxTicketView);
             }
         });
+    }
+
+    private void showSelectedView(Node node) {
+        hideViews();
+        node.setManaged(true);
+        node.setVisible(true);
     }
 
     private void styleWindow() {

@@ -1,6 +1,5 @@
 package nl.inholland.javafx.UI.View;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,9 +16,14 @@ import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 
 import java.time.LocalDateTime;
-import java.time.Period;
-import java.time.chrono.ChronoPeriod;
-import java.time.temporal.ValueRange;
+
+//FIXME: Room displaying opposite seat numbers
+//FIXME: Labels not showing for rooms
+//FIXME: Endtime not displaying when adding date and/or time
+
+//TODO: Find way to format movies while also being able to store back as movie
+//TODO: ManageMovies (Entire thing)
+//TODO: Logout button (Entire thing)
 
 public class ManageShowingsView extends View {
     Movie selectedMovie;
@@ -51,6 +55,7 @@ public class ManageShowingsView extends View {
 
     @Override
     void setInitialNodes() {
+        lblViewHeader = new Label();
         lblViewHeader.setText("Manage Showings");
     }
 
@@ -167,6 +172,7 @@ public class ManageShowingsView extends View {
 
     private void instantiateElements() {
         lblMovieTitle = new Label("Movie Title:");
+        choiceBoxMovieResult = new ChoiceBox<>();
         for (Movie movie : db.getMovies()) {
             choiceBoxMovieResult.getItems().add(movie);
         }
@@ -175,6 +181,7 @@ public class ManageShowingsView extends View {
         datePickerStartDateResult = new DatePicker();
         txtStartTimeResult = new TextField();
         lblRoom = new Label("Room:");
+        choiceBoxRoomResult = new ChoiceBox<>();
         choiceBoxRoomResult.getItems().addAll(room1, room2);
         lblEndTime = new Label("End:");
         lblEndTimeResult = new Label();

@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
+import nl.inholland.javafx.Model.User.User;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +76,7 @@ public abstract class View {
     }
 
     private void loadWindow(Stage window) {
+        window.setTitle(String.format("Fabulous Cinema -- -- %s -- username: $s", this.getClass()));
         setInitialNodes();
         assignSections();
         styleView();
@@ -175,7 +177,8 @@ public abstract class View {
         gridPane.setId("insertOptions");
         infoMessageContainer.setId("infoBox");
 
-        gridPane.setVisible(false);
+        if (this instanceof TicketView)
+            gridPane.setVisible(false);
     }
 
     private void styleRoomTableViews() {
