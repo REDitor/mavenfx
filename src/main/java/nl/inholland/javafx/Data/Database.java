@@ -119,10 +119,11 @@ public class Database {
 
     //region Movies
     public List<Movie> getMovies() {
+        List<Movie> dbMovies = new ArrayList<>();
         try {
             List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "movies.csv")));
             for (String line : strings) {
-                movies.add(
+                dbMovies.add(
                         new Movie(
                                 line.split(",")[0],
                                 Double.parseDouble(line.split(",")[1]),
@@ -136,7 +137,7 @@ public class Database {
             //.....
         }
 
-        return movies;
+        return dbMovies;
     }
     //endregion
 }

@@ -15,7 +15,11 @@ import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 
+import java.text.ParseException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 
 //FIXME: Room displaying opposite seat numbers
 //FIXME: Labels not showing for rooms
@@ -29,16 +33,18 @@ public class ManageShowingsView extends View {
     Movie selectedMovie;
     Room selectedRoom;
     LocalDateTime selectedDateTime;
+    LocalDate selectedDate;
+    LocalTime selectedTime;
 
     //region ManageShowingsView Elements
     //region gridPane
     Label lblMovieTitle;
-    ChoiceBox<Movie> choiceBoxMovieResult;
+    ChoiceBox<String> choiceBoxMovieResult;
     Label lblStartDateTime;
     DatePicker datePickerStartDateResult;
-    TextField txtStartTimeResult;
+    ChoiceBox<String> choiceBoxStartTimeResult;
     Label lblRoom;
-    ChoiceBox<Room> choiceBoxRoomResult;
+    ChoiceBox<String> choiceBoxRoomResult;
     Label lblEndTime;
     Label lblEndTimeResult;
     Button btnAddShowing;
@@ -82,7 +88,7 @@ public class ManageShowingsView extends View {
         GridPane.setConstraints(choiceBoxMovieResult, 1, 0);
         GridPane.setConstraints(lblStartDateTime, 2, 0);
         GridPane.setConstraints(datePickerStartDateResult, 3, 0);
-        GridPane.setConstraints(txtStartTimeResult, 4, 0);
+        GridPane.setConstraints(choiceBoxStartTimeResult, 4, 0);
         GridPane.setConstraints(lblRoom, 0, 1);
         GridPane.setConstraints(choiceBoxRoomResult, 1, 1);
         GridPane.setConstraints(lblEndTime, 2, 1);
@@ -96,7 +102,7 @@ public class ManageShowingsView extends View {
 
         gridPane.getChildren().addAll(
                 lblMovieTitle, choiceBoxMovieResult, lblStartDateTime, datePickerStartDateResult,
-                txtStartTimeResult, lblRoom, choiceBoxRoomResult, lblEndTime, lblEndTimeResult, btnAddShowing,
+                choiceBoxStartTimeResult, lblRoom, choiceBoxRoomResult, lblEndTime, lblEndTimeResult, btnAddShowing,
                 lblNrOfSeats, lblNrOfSeatsResult, lblPrice, lblPriceResult, btnClear
         );
     }
@@ -106,7 +112,12 @@ public class ManageShowingsView extends View {
         choiceBoxMovieResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                selectedMovie = choiceBoxMovieResult.getSelectionModel().getSelectedItem();
+                for (Movie movie : db.getMovies()) {
+                    if (movie.getTitle().equals(choiceBoxMovieResult.getSelectionModel().getSelectedItem())) {
+                        selectedMovie = movie;
+                        break;
+                    }
+                }
                 lblPriceResult.setText(String.format("%.2f", selectedMovie.getPrice()));
             }
         });
@@ -115,18 +126,36 @@ public class ManageShowingsView extends View {
         dateProperty.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                selectedDateTime = LocalDateTime.parse(datePickerStartDateResult.getEditor().getText() +
-                        " " + txtStartTimeResult.getText(), dateTimeFormatter);
-                LocalDateTime endTimeResult = selectedDateTime.plusMinutes(selectedMovie.getDuration().toMinutes());
-                lblEndTimeResult.setText(endTimeResult.format(dateTimeFormatter));
+                String dateString = datePickerStartDateResult.getEditor().getText();
+                if (!dateString.equals(""))
+                    selectedDate = LocalDate.parse(dateString, dateFormatter);
+            }
+        });
+
+        choiceBoxStartTimeResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                String timeString = choiceBoxStartTimeResult.getSelectionModel().getSelectedItem();
+                if (!timeString.equals(""))
+                    selectedTime = LocalTime.parse(timeString, timeFormatter);
+
+                if (!datePickerStartDateResult.getEditor().getText().equals(""))
+                    fillLabelEndTime(selectedDate, selectedTime);
             }
         });
 
         choiceBoxRoomResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                selectedRoom = choiceBoxRoomResult.getSelectionModel().getSelectedItem();
-                lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
+                if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == room1.toString())
+                    selectedRoom = room1;
+                else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == room2.toString())
+                    selectedRoom = room2;
+                else
+                    selectedRoom = null;
+
+                if (selectedRoom != null)
+                    lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
             }
         });
 
@@ -136,16 +165,17 @@ public class ManageShowingsView extends View {
                 try {
                     MovieShowing showing = new MovieShowing(selectedDateTime, selectedMovie,
                             selectedRoom.getNumberOfSeats(), selectedRoom);
-                    checkShowingInput(showing, selectedRoom, selectedMovie);
-                    selectedRoom.addShowing(
-                            new MovieShowing(
-                                    selectedDateTime,
-                                    selectedMovie,
-                                    selectedRoom.getNumberOfSeats(),
-                                    selectedRoom
-                            )
-                    );
-                } catch (NoMovieSelectedException | IncorrectTimeFormatException
+                    if (checkShowingInput(showing, selectedRoom, selectedMovie)) {
+                        selectedRoom.addShowing(
+                                new MovieShowing(
+                                        selectedDateTime,
+                                        selectedMovie,
+                                        selectedRoom.getNumberOfSeats(),
+                                        selectedRoom
+                                )
+                        );
+                    }
+                } catch (NoMovieSelectedException | NoTimeSelectedException
                         | NoRoomSelectedException | OverlappingShowingException rte) {
                     lblInfoMessage.setStyle("-fx-text-fill: red");
                     lblInfoMessage.setText(rte.getMessage());
@@ -157,7 +187,6 @@ public class ManageShowingsView extends View {
             @Override
             public void handle(ActionEvent actionEvent) {
                 clearFields();
-                gridPane.setVisible(false);
             }
         });
     }
@@ -166,7 +195,7 @@ public class ManageShowingsView extends View {
     void clearFields() {
         choiceBoxMovieResult.setValue(null);
         datePickerStartDateResult.setValue(null);
-        txtStartTimeResult.setText(null);
+        choiceBoxStartTimeResult.setValue(null);
         choiceBoxRoomResult.setValue(null);
     }
 
@@ -174,15 +203,15 @@ public class ManageShowingsView extends View {
         lblMovieTitle = new Label("Movie Title:");
         choiceBoxMovieResult = new ChoiceBox<>();
         for (Movie movie : db.getMovies()) {
-            choiceBoxMovieResult.getItems().add(movie);
+            choiceBoxMovieResult.getItems().add(movie.getTitle());
         }
-
         lblStartDateTime = new Label("Start:");
         datePickerStartDateResult = new DatePicker();
-        txtStartTimeResult = new TextField();
+        choiceBoxStartTimeResult = new ChoiceBox<>();
+        choiceBoxStartTimeResult.getItems().addAll(getStartTimes());
         lblRoom = new Label("Room:");
         choiceBoxRoomResult = new ChoiceBox<>();
-        choiceBoxRoomResult.getItems().addAll(room1, room2);
+        choiceBoxRoomResult.getItems().addAll(room1.toString(), room2.toString());
         lblEndTime = new Label("End:");
         lblEndTimeResult = new Label();
         btnAddShowing = new Button("Add Showing");
@@ -193,15 +222,27 @@ public class ManageShowingsView extends View {
         btnClear = new Button("Clear");
     }
 
-    private void checkShowingInput(MovieShowing showing, Room room, Movie movie) {
+    private MovieShowing setShowing(MovieShowing showing) {
+        showing.setTitle(selectedMovie.getTitle());
+        showing.setNumberOfSeats(selectedRoom.getNumberOfSeats());
+        showing.setAvailableTickets(selectedRoom.getNumberOfSeats());
+        showing.setPrice(selectedMovie.getPrice());
+        showing.setStartTime(selectedDateTime);
+        showing.
+    }
+
+    private boolean checkShowingInput(MovieShowing showing, Room room, Movie movie) {
         if (movie == null)
             throw new NoMovieSelectedException();
 
         if (datePickerStartDateResult.getEditor() == null)
-            throw new NoDateTimeSelectedException();
+            throw new NoDateSelectedException();
 
         if (room == null)
             throw new NoRoomSelectedException();
+
+        if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
+            throw new NoTimeSelectedException();
 
         LocalDateTime newStart = showing.getStartTime().minusMinutes(room.getRoomBreak().toMinutes());
         LocalDateTime newEnd = showing.getEndTime().plusMinutes(room.getRoomBreak().toMinutes());
@@ -214,6 +255,26 @@ public class ManageShowingsView extends View {
                 throw new OverlappingShowingException();
             }
         }
+        return true;
+    }
+
+    private void fillLabelEndTime(LocalDate date, LocalTime time) {
+        selectedDateTime = LocalDateTime.of(date, time);
+        LocalDateTime endTimeResult = selectedDateTime.plusMinutes(selectedMovie.getDuration().toMinutes());
+        lblEndTimeResult.setText(endTimeResult.format(dateTimeFormatter));
+    }
+
+    private String[] getStartTimes() {
+        return new String[]{
+                "16:00", "16:15", "16:30", "16:45",
+                "17:00", "17:15", "17:30", "17:45",
+                "18:00", "18:15", "18:30", "18:45",
+                "19:00", "19:15", "19:30", "19:45",
+                "20:00", "20:15", "20:30", "20:45",
+                "21:00", "21:15", "21:30", "21:45",
+                "22:00", "22:15", "22:30", "22:45",
+                "23:00", "23:15", "23:30", "23:45"
+        };
     }
 
     private boolean isOverlapping(LocalDateTime newStart, LocalDateTime newEnd, LocalDateTime existStart, LocalDateTime existEnd) {

@@ -17,5 +17,8 @@ public class Movie {
         this.duration = duration;
     }
 
-
+    @Override
+    public String toString() {
+        return this.getTitle();
+    }
 }

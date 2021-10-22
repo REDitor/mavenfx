@@ -34,6 +34,6 @@ public class Room {
 
     @Override
     public String toString() {
-        return "Room " + roomNumber;
+        return String.format("Room %d", this.getRoomNumber());
     }
 }

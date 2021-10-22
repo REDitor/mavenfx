@@ -9,16 +9,22 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.converter.LocalDateStringConverter;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.User;
 
+import javax.swing.text.DateFormatter;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public abstract class View {
     protected final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
+    protected final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    protected final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
     Database db;
     Stage window;
 
@@ -76,7 +82,7 @@ public abstract class View {
     }
 
     private void loadWindow(Stage window) {
-        window.setTitle(String.format("Fabulous Cinema -- -- %s -- username: $s", this.getClass()));
+        window.setTitle(String.format("Fabulous Cinema -- -- %s -- username: $s", this.getClass().getSimpleName()));
         setInitialNodes();
         assignSections();
         styleView();
