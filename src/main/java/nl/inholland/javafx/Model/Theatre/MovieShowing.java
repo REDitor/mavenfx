@@ -4,60 +4,67 @@ import java.time.LocalDateTime;
 
 public class MovieShowing {
     private LocalDateTime startTime;
+    private LocalDateTime endTime;
     Movie movie;
-    Room room;
     private String title;
     private double price;
     private int availableTickets;
     private int numberOfSeats;
 
-
     public LocalDateTime getStartTime() {
         return startTime;
     }
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
+
     public LocalDateTime getEndTime() {
-        return startTime.plusMinutes(movie.getDuration().toMinutes());
+        return endTime;
     }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     public Movie getMovie() {
         return movie;
     }
+
     public void setMovie(Movie movie) {
         this.movie = movie;
-    }
-    public Room getRoom() {
-        return room;
-    }
-    public void setRoom(Room room) {
-        this.room = room;
     }
 
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public double getPrice() {
         return price;
     }
+
     public void setPrice(double price) {
         this.price = price;
     }
+
     public int getAvailableTickets() {
         return availableTickets;
     }
+
     public void setAvailableTickets(int availableTickets) {
         this.availableTickets = availableTickets;
     }
-    public void getNumberOfSeats() {
-        this.numberOfSeats = room.getNumberOfSeats();
+
+    public int getNumberOfSeats() {
+        return numberOfSeats;
     }
 
-    public MovieShowing() {
+    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
+        this.startTime = startTime;
+        numberOfSeats = room.getNumberOfSeats();
+        availableTickets = room.getNumberOfSeats();
     }
+
 
     public void deductAvailableTickets(int numberOfTickets) {
         availableTickets -= numberOfTickets;

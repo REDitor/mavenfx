@@ -20,6 +20,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static javax.swing.JOptionPane.YES_NO_OPTION;
+import static javax.swing.JOptionPane.showConfirmDialog;
+
 //FIXME: Room displaying opposite seat numbers
 //FIXME: Labels not showing for rooms
 //FIXME: Endtime not displaying when adding date and/or time
@@ -31,10 +34,9 @@ import java.time.LocalTime;
 public class ManageShowingsView extends View {
     Movie selectedMovie;
     Room selectedRoom;
-    // LocalDateTime selectedDateTime;
+    LocalDateTime selectedDateTime;
     LocalDate selectedDate;
     LocalTime selectedTime;
-    MovieShowing newShowing;
 
     //region ManageShowingsView Elements
     //region gridPane
@@ -57,7 +59,6 @@ public class ManageShowingsView extends View {
     //endregion
     public ManageShowingsView(Database db, Stage window, User user) {
         super(db, window, user);
-        newShowing = new MovieShowing();
     }
 
     @Override
@@ -131,6 +132,7 @@ public class ManageShowingsView extends View {
                 if (dateString != null) {
                     selectedDate = LocalDate.parse(dateString, dateFormatter);
                     choiceBoxStartTimeResult.setDisable(false);
+                    choiceBoxStartTimeResult.requestFocus();
                 }
             }
         });
@@ -141,8 +143,8 @@ public class ManageShowingsView extends View {
                 String timeString = choiceBoxStartTimeResult.getValue();
                 if (timeString != null) {
                     selectedTime = LocalTime.parse(timeString, timeFormatter);
-                    LocalDateTime selectedDateTime = LocalDateTime.of(selectedDate, selectedTime);
-                    lblEndTimeResult.setText(newShowing.getEndTime().toString());
+                    selectedDateTime = LocalDateTime.of(selectedDate, selectedTime);
+                    lblEndTimeResult.setText(calcEndTime(selectedDateTime).toString());
                 }
             }
         });
@@ -155,8 +157,7 @@ public class ManageShowingsView extends View {
                 else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 2"))
                     selectedRoom = room2;
 
-                if (selectedRoom != null)
-                    lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
+                lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
             }
         });
 
@@ -164,8 +165,10 @@ public class ManageShowingsView extends View {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    if (checkShowingInput(newShowing, selectedRoom, newShowing.getMovie()))
-                        selectedRoom.addShowing(newShowing);
+                    MovieShowing newShowing = createShowing();
+                    if (allFieldsFilled(newShowing) && isCorrectInput() && !isOverlapping(newShowing)) {
+                        confirmAddShowing(newShowing);
+                    }
                 } catch (NoMovieSelectedException | NoTimeSelectedException
                         | NoRoomSelectedException | OverlappingShowingException rte) {
                     lblInfoMessage.setStyle("-fx-text-fill: red");
@@ -178,6 +181,8 @@ public class ManageShowingsView extends View {
             @Override
             public void handle(ActionEvent actionEvent) {
                 clearFields();
+                choiceBoxStartTimeResult.setDisable(true);
+                datePickerStartDateResult.setDisable(true);
             }
         });
     }
@@ -214,42 +219,13 @@ public class ManageShowingsView extends View {
         btnClear = new Button("Clear");
     }
 
-    private boolean checkShowingInput(MovieShowing showing, Room room, Movie movie) {
-        if (movie == null)
-            throw new NoMovieSelectedException();
+    private MovieShowing createShowing() {
+        MovieShowing newShowing = new MovieShowing(selectedRoom, selectedDateTime);
+        newShowing.setMovie(selectedMovie);
+        newShowing.setTitle(selectedMovie.getTitle());
+        newShowing.setPrice(selectedMovie.getPrice());
 
-        if (datePickerStartDateResult.getEditor() == null)
-            throw new NoDateSelectedException();
-
-
-        if (room == null)
-            throw new NoRoomSelectedException();
-
-        if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
-            throw new NoTimeSelectedException();
-
-        LocalDateTime newStart = showing.getStartTime().minusMinutes(room.getRoomBreak().toMinutes());
-        LocalDateTime newEnd = showing.getEndTime().plusMinutes(room.getRoomBreak().toMinutes());
-
-        for (MovieShowing existingShowing : room.getShowings()) {
-            LocalDateTime existingStart = existingShowing.getStartTime().minusMinutes(room.getRoomBreak().toMinutes());
-            LocalDateTime existingEnd = existingShowing.getEndTime().plusMinutes(room.getRoomBreak().toMinutes());
-
-            if (isOverlapping(newStart, newEnd, existingStart, existingEnd)) {
-                throw new OverlappingShowingException();
-            }
-        }
-        return true;
-    }
-
-    private void addShowingInfo(LocalDate date, LocalTime time, Movie movie) {
-        LocalDateTime selectedDateTime = LocalDateTime.of(date, time);
-        // newShowing = new MovieShowing(
-        //         selectedDateTime,
-        //         movie,
-        //         selectedRoom.getNumberOfSeats(),
-        //         selectedRoom
-        // );
+        return newShowing;
     }
 
     private String[] getStartTimes() {
@@ -265,7 +241,66 @@ public class ManageShowingsView extends View {
         };
     }
 
-    private boolean isOverlapping(LocalDateTime newStart, LocalDateTime newEnd, LocalDateTime existStart, LocalDateTime existEnd) {
-        return newStart.isBefore(existEnd) && existStart.isBefore(newEnd);
+    public boolean allFieldsFilled(MovieShowing newShowing) {
+        if (newShowing == null) {
+            return false;
+        } else if (newShowing.getMovie() == null || newShowing.getStartTime() == null || selectedRoom == null) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isCorrectInput() {
+        if (choiceBoxMovieResult == null)
+            throw new NoMovieSelectedException();
+
+        if (datePickerStartDateResult.getEditor() == null)
+            throw new NoDateSelectedException();
+
+        if (choiceBoxRoomResult == null)
+            throw new NoRoomSelectedException();
+
+        if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
+            throw new NoTimeSelectedException();
+
+        return true;
+    }
+
+    private boolean isOverlapping(MovieShowing newShowing) {
+        LocalDateTime newStart = newShowing.getStartTime().minusMinutes(selectedRoom.getRoomBreak().toMinutes());
+        LocalDateTime newEnd = newShowing.getEndTime().plusMinutes(selectedRoom.getRoomBreak().toMinutes());
+
+        for (MovieShowing existingShowing : selectedRoom.getShowings()) {
+            LocalDateTime existingStart = existingShowing.getStartTime().minusMinutes(selectedRoom.getRoomBreak().toMinutes());
+            LocalDateTime existingEnd = existingShowing.getEndTime().plusMinutes(selectedRoom.getRoomBreak().toMinutes());
+
+            if (newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd)) {
+                throw new OverlappingShowingException();
+            }
+        }
+        return false;
+    }
+
+    private void confirmAddShowing(MovieShowing showing) {
+        int result = showConfirmDialog(
+                null,
+                String.format("Are you sure you want to add '%s' to the scheduled showings?", showing.getTitle()),
+                "Confirm Add Showing",
+                YES_NO_OPTION
+        );
+
+        if (result == YES_NO_OPTION) {
+            selectedRoom.addShowing(showing);
+            lblInfoMessage.setText(String.format(
+                    "Successfully added showing to the schedule:%nRoom: Room %d%nTitle: %s%nStart: %s%nEnd: %s",
+                    selectedRoom.getRoomNumber(), showing.getTitle(), showing.getStartTime(), showing.getEndTime()
+            ));
+            clearFields();
+        } else
+            lblInfoMessage.setText("[Adding Canceled]");
+    }
+
+    private LocalDateTime calcEndTime(LocalDateTime startTime) {
+        return startTime.plusMinutes(selectedMovie.getDuration().toMinutes());
     }
 }
