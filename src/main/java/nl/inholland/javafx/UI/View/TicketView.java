@@ -18,6 +18,7 @@ import nl.inholland.javafx.Exception.ZeroTicketsException;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.Theatre.Ticket;
+import nl.inholland.javafx.Model.User.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,12 +44,10 @@ public class TicketView extends View {
     Label lblEndTimeResult;
     Label lblName;
     TextField txtNameResult;
-
     //endregion
 
-
-    public TicketView(Database db, Stage window) {
-        super(db, window);
+    public TicketView(Database db, Stage window, User user) {
+        super(db, window, user);
         soldTickets = new ArrayList<>();
     }
 
@@ -120,30 +119,6 @@ public class TicketView extends View {
         });
     }
 
-    // public void assignSections() {
-    //     setTableViews();
-    //     setGridPane();
-    //     setInfoBox();
-    //
-    //     inputContainer = new VBox();
-    //     inputContainer.getChildren().addAll(gridPane, infoMessageContainer);
-    //
-    //     mainContainer = new VBox();
-    //     mainContainer.getChildren().addAll(lblTitle, tableViewContainer, inputContainer); //add all containers to the parent container
-    // }
-
-    // private void setSelectedRoom(TableView tableView) {
-    //     if (tableView == tableViewRoom1) {
-    //         selectedRoom = room1;
-    //     } else {
-    //         selectedRoom = room2;
-    //     }
-    // }
-
-    // private void removeSelection(TableView tableView) {
-    //     tableView.getSelectionModel().clearSelection();
-    // }
-
     @Override
     void clearFields() {
         lblRoomResult.setText(null);
@@ -175,58 +150,6 @@ public class TicketView extends View {
         txtNameResult = new TextField();
         btnClear = new Button("Clear");
     }
-
-    // private void createTableContainers() {
-    //     tableViewContainer = new HBox();
-    //
-    //     vBoxRoom1 = new VBox();
-    //     lblRoom1 = new Label("Room 1");
-    //     tableViewRoom1 = new TableView<>();
-    //
-    //     vBoxRoom2 = new VBox();
-    //     lblRoom2 = new Label("Room 2");
-    //     tableViewRoom2 = new TableView<>();
-    // }
-
-    // private void setTableViews() {
-    //     createTableContainers();
-    //     createTableColumns(tableViewRoom1);
-    //     createTableColumns(tableViewRoom2);
-    //
-    //     tableViewRoom1.setItems(showingsRoom1);
-    //     vBoxRoom1.getChildren().addAll(lblRoom1, tableViewRoom1); //add tableview for room 1 to a container
-    //
-    //     tableViewRoom2.setItems(showingsRoom2);
-    //     vBoxRoom2.getChildren().addAll(lblRoom2, tableViewRoom2); //add tableview for room 2 to a container
-    //
-    //     tableViewContainer.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
-    // }
-
-    // @Override
-    // void createTableColumns(TableView<MovieShowing> tableView) {
-    //     TableColumn<MovieShowing, LocalDateTime> colStartTime;
-    //     TableColumn<MovieShowing, LocalDateTime> colEndTime;
-    //     TableColumn<MovieShowing, String> colTitle;
-    //     TableColumn<MovieShowing, Integer> colSeats;
-    //     TableColumn<MovieShowing, Double> colPrice;
-    //
-    //     colStartTime = new TableColumn<>("Start");
-    //     colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
-    //
-    //     colEndTime = new TableColumn<>("End");
-    //     colEndTime.setCellValueFactory(new PropertyValueFactory<>("endTime"));
-    //
-    //     colTitle = new TableColumn<>("Title");
-    //     colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
-    //
-    //     colSeats = new TableColumn<>("Seats");
-    //     colSeats.setCellValueFactory(new PropertyValueFactory<>("numberOfSeats"));
-    //
-    //     colPrice = new TableColumn<>("Price");
-    //     colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-    //
-    //     tableView.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
-    // }
 
     private void loadSelectionInfo(MovieShowing showing, Room room) {
         gridPane.setVisible(true);
@@ -274,15 +197,6 @@ public class TicketView extends View {
                 btnClear
         );
     }
-
-    // private void setInfoBox() {
-    //     infoMessageContainer = new HBox();
-    //     infoMessageContainer.setPadding(new Insets(10));
-    //     infoMessageContainer.setSpacing(20);
-    //     lblInfoMessage = new Label();
-    //
-    //     infoMessageContainer.getChildren().add(lblInfoMessage);
-    // }
 
     private void confirmPurchase(MovieShowing showing, int numberOfTickets, String name) {
         if (!ticketsLeft(numberOfTickets, showing))

@@ -54,9 +54,9 @@ public class MainWindow {
 
         Stage window = new Stage();
 
-        ticketView = new TicketView(db, window);
+        ticketView = new TicketView(db, window, loggedUser);
         // manageMoviesView = new ManageMoviesView(db, window);
-        manageShowingsView = new ManageShowingsView(db, window);
+        manageShowingsView = new ManageShowingsView(db, window, loggedUser);
 
         loadWindow(window);
     }

@@ -14,6 +14,7 @@ import nl.inholland.javafx.Exception.*;
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
+import nl.inholland.javafx.Model.User.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ import java.time.LocalTime;
 public class ManageShowingsView extends View {
     Movie selectedMovie;
     Room selectedRoom;
-    LocalDateTime selectedDateTime;
+    // LocalDateTime selectedDateTime;
     LocalDate selectedDate;
     LocalTime selectedTime;
     MovieShowing newShowing;
@@ -54,8 +55,8 @@ public class ManageShowingsView extends View {
 
     //endregion
     //endregion
-    public ManageShowingsView(Database db, Stage window) {
-        super(db, window);
+    public ManageShowingsView(Database db, Stage window, User user) {
+        super(db, window, user);
         newShowing = new MovieShowing();
     }
 
@@ -109,12 +110,12 @@ public class ManageShowingsView extends View {
 
     @Override
     void setEventHandlers() {
-        choiceBoxMovieResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        choiceBoxMovieResult.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 for (Movie movie : db.getMovies()) {
                     if (movie.getTitle().equals(choiceBoxMovieResult.getSelectionModel().getSelectedItem())) {
-                        newShowing.setTitle(movie.getTitle());
+                        selectedMovie = movie;
                         lblPriceResult.setText(String.format("%.2f", movie.getPrice()));
                         break;
                     }
@@ -134,21 +135,21 @@ public class ManageShowingsView extends View {
             }
         });
 
-        choiceBoxStartTimeResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        choiceBoxStartTimeResult.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                String timeString = choiceBoxStartTimeResult.getSelectionModel().getSelectedItem();
-                if (timeString != null)
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                String timeString = choiceBoxStartTimeResult.getValue();
+                if (timeString != null) {
                     selectedTime = LocalTime.parse(timeString, timeFormatter);
-
-                if (!datePickerStartDateResult.getEditor().getText().equals(""))
-                    fillEndTime(selectedDate, selectedTime);
+                    LocalDateTime selectedDateTime = LocalDateTime.of(selectedDate, selectedTime);
+                    lblEndTimeResult.setText(newShowing.getEndTime().toString());
+                }
             }
         });
 
-        choiceBoxRoomResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+        choiceBoxRoomResult.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 1"))
                     selectedRoom = room1;
                 else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 2"))
@@ -163,18 +164,8 @@ public class ManageShowingsView extends View {
             @Override
             public void handle(ActionEvent actionEvent) {
                 try {
-                    MovieShowing showing = new MovieShowing(selectedDateTime, selectedMovie,
-                            selectedRoom.getNumberOfSeats(), selectedRoom);
-                    if (checkShowingInput(showing, selectedRoom, selectedMovie)) {
-                        selectedRoom.addShowing(
-                                new MovieShowing(
-                                        selectedDateTime,
-                                        selectedMovie,
-                                        selectedRoom.getNumberOfSeats(),
-                                        selectedRoom
-                                )
-                        );
-                    }
+                    if (checkShowingInput(newShowing, selectedRoom, newShowing.getMovie()))
+                        selectedRoom.addShowing(newShowing);
                 } catch (NoMovieSelectedException | NoTimeSelectedException
                         | NoRoomSelectedException | OverlappingShowingException rte) {
                     lblInfoMessage.setStyle("-fx-text-fill: red");
@@ -230,6 +221,7 @@ public class ManageShowingsView extends View {
         if (datePickerStartDateResult.getEditor() == null)
             throw new NoDateSelectedException();
 
+
         if (room == null)
             throw new NoRoomSelectedException();
 
@@ -250,10 +242,14 @@ public class ManageShowingsView extends View {
         return true;
     }
 
-    private void fillEndTime(LocalDate date, LocalTime time) {
-        selectedDateTime = LocalDateTime.of(date, time);
-        LocalDateTime endTimeResult = selectedDateTime.plusMinutes(selectedMovie.getDuration().toMinutes());
-        lblEndTimeResult.setText();
+    private void addShowingInfo(LocalDate date, LocalTime time, Movie movie) {
+        LocalDateTime selectedDateTime = LocalDateTime.of(date, time);
+        // newShowing = new MovieShowing(
+        //         selectedDateTime,
+        //         movie,
+        //         selectedRoom.getNumberOfSeats(),
+        //         selectedRoom
+        // );
     }
 
     private String[] getStartTimes() {

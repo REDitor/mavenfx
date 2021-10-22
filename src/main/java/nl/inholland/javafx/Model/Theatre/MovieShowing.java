@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 
 public class MovieShowing {
     private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    Movie movie;
+    Room room;
     private String title;
     private double price;
     private int availableTickets;
     private int numberOfSeats;
+
 
     public LocalDateTime getStartTime() {
         return startTime;
@@ -17,8 +19,21 @@ public class MovieShowing {
         this.startTime = startTime;
     }
     public LocalDateTime getEndTime() {
-        return endTime;
+        return startTime.plusMinutes(movie.getDuration().toMinutes());
     }
+    public Movie getMovie() {
+        return movie;
+    }
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
+    public Room getRoom() {
+        return room;
+    }
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -34,26 +49,14 @@ public class MovieShowing {
     public int getAvailableTickets() {
         return availableTickets;
     }
-    public void setAvailableTickets(int numberOfTickets) {
-        this.availableTickets = numberOfTickets;
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
     }
-    public int getNumberOfSeats() {
-        return numberOfSeats;
-    }
-    public void setNumberOfSeats(int numberOfSeats) {
-        this.numberOfSeats = numberOfSeats;
+    public void getNumberOfSeats() {
+        this.numberOfSeats = room.getNumberOfSeats();
     }
 
     public MovieShowing() {
-    }
-
-    public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
-        this.startTime = startTime;
-        this.endTime = startTime.plusMinutes(movie.getDuration().toMinutes());
-        this.title = movie.getTitle();
-        this.availableTickets = availableTickets;
-        this.price = movie.getPrice();
-        this.numberOfSeats = room.getNumberOfSeats();
     }
 
     public void deductAvailableTickets(int numberOfTickets) {

@@ -27,6 +27,7 @@ public abstract class View {
 
     Database db;
     Stage window;
+    User user;
 
     Room room1;
     Room room2;
@@ -66,9 +67,11 @@ public abstract class View {
     //endregion
     //endregion
 
-    public View(Database db, Stage window) {
+    public View(Database db, Stage window, User user) {
         this.db = db;
         this.window = window;
+        this.user = user;
+
         room1 = db.getRoom1();
         room2 = db.getRoom2();
         showingsRoom1 = FXCollections.observableArrayList(room1.getShowings());
@@ -82,7 +85,8 @@ public abstract class View {
     }
 
     private void loadWindow(Stage window) {
-        window.setTitle(String.format("Fabulous Cinema -- -- %s -- username: $s", this.getClass().getSimpleName()));
+        window.setTitle(String.format("Fabulous Cinema -- -- %s -- username: %s",
+                this.getClass().getSimpleName(), user.getUsername()));
         setInitialNodes();
         assignSections();
         styleView();
