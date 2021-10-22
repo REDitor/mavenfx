@@ -23,13 +23,12 @@ import java.time.LocalTime;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 import static javax.swing.JOptionPane.showConfirmDialog;
 
-//FIXME: Room displaying opposite seat numbers
-//FIXME: Labels not showing for rooms
-//FIXME: Endtime not displaying when adding date and/or time
-
-//TODO: Find way to format movies while also being able to store back as movie
 //TODO: ManageMovies (Entire thing)
 //TODO: Logout button (Entire thing)
+//TODO: db.add methods
+
+//FIXME: addShowing doesn't seem to work
+//FIXME: Labels not showing for rooms
 
 public class ManageShowingsView extends View {
     Movie selectedMovie;
