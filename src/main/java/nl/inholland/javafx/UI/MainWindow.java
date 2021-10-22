@@ -2,7 +2,6 @@ package nl.inholland.javafx.UI;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -10,13 +9,11 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.User.Permission;
 import nl.inholland.javafx.Model.User.User;
-import nl.inholland.javafx.UI.View.ManageMoviesView;
 import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
 import nl.inholland.javafx.UI.View.View;

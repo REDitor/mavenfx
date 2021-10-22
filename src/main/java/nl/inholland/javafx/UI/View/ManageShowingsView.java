@@ -114,11 +114,13 @@ public class ManageShowingsView extends View {
         choiceBoxMovieResult.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                for (Movie movie : db.getMovies()) {
-                    if (movie.getTitle().equals(choiceBoxMovieResult.getSelectionModel().getSelectedItem())) {
-                        selectedMovie = movie;
-                        lblPriceResult.setText(String.format("%.2f", movie.getPrice()));
-                        break;
+                if (choiceBoxMovieResult.getValue() != null) {
+                    for (Movie movie : db.getMovies()) {
+                        if (movie.getTitle().equals(choiceBoxMovieResult.getSelectionModel().getSelectedItem())) {
+                            selectedMovie = movie;
+                            lblPriceResult.setText(String.format("%.2f", movie.getPrice()));
+                            break;
+                        }
                     }
                 }
             }
@@ -128,11 +130,14 @@ public class ManageShowingsView extends View {
         dateProperty.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                String dateString = datePickerStartDateResult.getEditor().getText();
-                if (dateString != null) {
-                    selectedDate = LocalDate.parse(dateString, dateFormatter);
-                    choiceBoxStartTimeResult.setDisable(false);
-                    choiceBoxStartTimeResult.requestFocus();
+                if (datePickerStartDateResult.getEditor().getText().length() >= 8
+                    || datePickerStartDateResult.getEditor().getText().contains("-")) {
+                    String dateString = datePickerStartDateResult.getEditor().getText();
+                    if (dateString != null) {
+                        selectedDate = LocalDate.parse(dateString, dateFormatter);
+                        choiceBoxStartTimeResult.setDisable(false);
+                        choiceBoxStartTimeResult.requestFocus();
+                    }
                 }
             }
         });
@@ -140,11 +145,13 @@ public class ManageShowingsView extends View {
         choiceBoxStartTimeResult.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                String timeString = choiceBoxStartTimeResult.getValue();
-                if (timeString != null) {
-                    selectedTime = LocalTime.parse(timeString, timeFormatter);
-                    selectedDateTime = LocalDateTime.of(selectedDate, selectedTime);
-                    lblEndTimeResult.setText(calcEndTime(selectedDateTime).toString());
+                if (choiceBoxStartTimeResult.getValue() != null) {
+                    String timeString = choiceBoxStartTimeResult.getValue();
+                    if (timeString != null) {
+                        selectedTime = LocalTime.parse(timeString, timeFormatter);
+                        selectedDateTime = LocalDateTime.of(selectedDate, selectedTime);
+                        lblEndTimeResult.setText(calcEndTime(selectedDateTime).toString());
+                    }
                 }
             }
         });
@@ -152,12 +159,14 @@ public class ManageShowingsView extends View {
         choiceBoxRoomResult.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 1"))
-                    selectedRoom = room1;
-                else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 2"))
-                    selectedRoom = room2;
+                if (choiceBoxRoomResult.getValue() != null) {
+                    if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 1"))
+                        selectedRoom = room1;
+                    else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 2"))
+                        selectedRoom = room2;
 
-                lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
+                    lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
+                }
             }
         });
 
@@ -182,17 +191,16 @@ public class ManageShowingsView extends View {
             public void handle(ActionEvent actionEvent) {
                 clearFields();
                 choiceBoxStartTimeResult.setDisable(true);
-                datePickerStartDateResult.setDisable(true);
             }
         });
     }
 
     @Override
     void clearFields() {
-        choiceBoxMovieResult.setValue(null);
-        datePickerStartDateResult.setValue(null);
-        choiceBoxStartTimeResult.setValue(null);
-        choiceBoxRoomResult.setValue(null);
+        choiceBoxMovieResult.getSelectionModel().clearSelection();
+        datePickerStartDateResult.getEditor().clear();
+        choiceBoxStartTimeResult.getSelectionModel().clearSelection();
+        choiceBoxRoomResult.getSelectionModel().clearSelection();
     }
 
     private void instantiateElements() {
@@ -220,10 +228,8 @@ public class ManageShowingsView extends View {
     }
 
     private MovieShowing createShowing() {
-        MovieShowing newShowing = new MovieShowing(selectedRoom, selectedDateTime);
-        newShowing.setMovie(selectedMovie);
-        newShowing.setTitle(selectedMovie.getTitle());
-        newShowing.setPrice(selectedMovie.getPrice());
+        MovieShowing newShowing = new MovieShowing(selectedDateTime, selectedMovie,
+                selectedRoom.getNumberOfSeats(), selectedRoom);
 
         return newShowing;
     }

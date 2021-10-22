@@ -46,35 +46,40 @@ public class Database {
     //region Rooms
     private void addInitialShowings() {
         //Room1
-        MovieShowing room1Showing1 = new MovieShowing(room1, LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter));
-        room1Showing1.setMovie(movies.get(0));
-        room1Showing1.setAvailableTickets(room1.getNumberOfSeats());
-        room1Showing1.setTitle(movies.get(0).getTitle());
-        room1Showing1.setPrice(movies.get(0).getPrice());
-        room1.addShowing(room1Showing1);
-
-        MovieShowing room1Showing2 = new MovieShowing(room1, LocalDateTime.parse("10-10-2021 22:30", dateTimeFormatter));
-        room1Showing2.setMovie(movies.get(1));
-        room1Showing2.setAvailableTickets(room1.getNumberOfSeats());
-        room1Showing2.setTitle(movies.get(1).getTitle());
-        room1Showing2.setPrice(movies.get(1).getPrice());
-        room1.addShowing(room1Showing2);
+        room1.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
+                        movies.get(0),
+                        room1.getNumberOfSeats(),
+                        room1
+                )
+        );
+        room1.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("10-10-2021 22:30", dateTimeFormatter),
+                        movies.get(1),
+                        room1.getNumberOfSeats(),
+                        room1
+                )
+        );
 
         //Room2
-        MovieShowing room2Showing1 = new MovieShowing(room2, LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter));
-        room2Showing1.setMovie(movies.get(1));
-        room2Showing1.setAvailableTickets(room2.getNumberOfSeats());
-        room2Showing1.setTitle(movies.get(1).getTitle());
-        room2Showing1.setPrice(movies.get(1).getPrice());
-        room2.addShowing(room2Showing1);
-
-        MovieShowing room2Showing2 = new MovieShowing(room2, LocalDateTime.parse("10-10-2021 22:30", dateTimeFormatter));
-        room2Showing2.setMovie(movies.get(0));
-        room2Showing2.setAvailableTickets(room2.getNumberOfSeats());
-        room2Showing2.setTitle(movies.get(0).getTitle());
-        room2Showing2.setPrice(movies.get(0).getPrice());
-        room2.addShowing(room2Showing2);
-
+        room2.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("09-10-2021 20:00", dateTimeFormatter),
+                        movies.get(1),
+                        room1.getNumberOfSeats(),
+                        room2
+                )
+        );
+        room2.addShowing(
+                new MovieShowing(
+                        LocalDateTime.parse("09-10-2021 22:00", dateTimeFormatter),
+                        movies.get(0),
+                        room1.getNumberOfSeats(),
+                        room2
+                )
+        );
     }
     //endregion
 
