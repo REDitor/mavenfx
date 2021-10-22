@@ -15,11 +15,9 @@ import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 
 //FIXME: Room displaying opposite seat numbers
 //FIXME: Labels not showing for rooms
@@ -35,6 +33,7 @@ public class ManageShowingsView extends View {
     LocalDateTime selectedDateTime;
     LocalDate selectedDate;
     LocalTime selectedTime;
+    MovieShowing newShowing;
 
     //region ManageShowingsView Elements
     //region gridPane
@@ -57,6 +56,7 @@ public class ManageShowingsView extends View {
     //endregion
     public ManageShowingsView(Database db, Stage window) {
         super(db, window);
+        newShowing = new MovieShowing();
     }
 
     @Override
@@ -114,11 +114,11 @@ public class ManageShowingsView extends View {
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 for (Movie movie : db.getMovies()) {
                     if (movie.getTitle().equals(choiceBoxMovieResult.getSelectionModel().getSelectedItem())) {
-                        selectedMovie = movie;
+                        newShowing.setTitle(movie.getTitle());
+                        lblPriceResult.setText(String.format("%.2f", movie.getPrice()));
                         break;
                     }
                 }
-                lblPriceResult.setText(String.format("%.2f", selectedMovie.getPrice()));
             }
         });
 
@@ -127,8 +127,10 @@ public class ManageShowingsView extends View {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 String dateString = datePickerStartDateResult.getEditor().getText();
-                if (!dateString.equals(""))
+                if (dateString != null) {
                     selectedDate = LocalDate.parse(dateString, dateFormatter);
+                    choiceBoxStartTimeResult.setDisable(false);
+                }
             }
         });
 
@@ -136,23 +138,21 @@ public class ManageShowingsView extends View {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
                 String timeString = choiceBoxStartTimeResult.getSelectionModel().getSelectedItem();
-                if (!timeString.equals(""))
+                if (timeString != null)
                     selectedTime = LocalTime.parse(timeString, timeFormatter);
 
                 if (!datePickerStartDateResult.getEditor().getText().equals(""))
-                    fillLabelEndTime(selectedDate, selectedTime);
+                    fillEndTime(selectedDate, selectedTime);
             }
         });
 
         choiceBoxRoomResult.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
-                if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == room1.toString())
+                if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 1"))
                     selectedRoom = room1;
-                else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == room2.toString())
+                else if (choiceBoxRoomResult.getSelectionModel().getSelectedItem().equals("Room 2"))
                     selectedRoom = room2;
-                else
-                    selectedRoom = null;
 
                 if (selectedRoom != null)
                     lblNrOfSeatsResult.setText(String.format("%d", selectedRoom.getNumberOfSeats()));
@@ -209,6 +209,7 @@ public class ManageShowingsView extends View {
         datePickerStartDateResult = new DatePicker();
         choiceBoxStartTimeResult = new ChoiceBox<>();
         choiceBoxStartTimeResult.getItems().addAll(getStartTimes());
+        choiceBoxStartTimeResult.setDisable(true);
         lblRoom = new Label("Room:");
         choiceBoxRoomResult = new ChoiceBox<>();
         choiceBoxRoomResult.getItems().addAll(room1.toString(), room2.toString());
@@ -220,15 +221,6 @@ public class ManageShowingsView extends View {
         lblPrice = new Label("Price:");
         lblPriceResult = new Label();
         btnClear = new Button("Clear");
-    }
-
-    private MovieShowing setShowing(MovieShowing showing) {
-        showing.setTitle(selectedMovie.getTitle());
-        showing.setNumberOfSeats(selectedRoom.getNumberOfSeats());
-        showing.setAvailableTickets(selectedRoom.getNumberOfSeats());
-        showing.setPrice(selectedMovie.getPrice());
-        showing.setStartTime(selectedDateTime);
-        showing.
     }
 
     private boolean checkShowingInput(MovieShowing showing, Room room, Movie movie) {
@@ -258,10 +250,10 @@ public class ManageShowingsView extends View {
         return true;
     }
 
-    private void fillLabelEndTime(LocalDate date, LocalTime time) {
+    private void fillEndTime(LocalDate date, LocalTime time) {
         selectedDateTime = LocalDateTime.of(date, time);
         LocalDateTime endTimeResult = selectedDateTime.plusMinutes(selectedMovie.getDuration().toMinutes());
-        lblEndTimeResult.setText(endTimeResult.format(dateTimeFormatter));
+        lblEndTimeResult.setText();
     }
 
     private String[] getStartTimes() {
