@@ -62,6 +62,7 @@ public class MovieShowing {
     public MovieShowing(LocalDateTime startTime, Movie movie, int availableTickets, Room room) {
         this.startTime = startTime;
         this.endTime = startTime.plusMinutes(movie.getDuration().toMinutes());
+        this.movie = movie;
         this.title = movie.getTitle();
         this.availableTickets = room.getNumberOfSeats();
         this.price = movie.getPrice();

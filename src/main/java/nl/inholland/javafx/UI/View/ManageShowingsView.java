@@ -176,6 +176,7 @@ public class ManageShowingsView extends View {
                     MovieShowing newShowing = createShowing();
                     if (allFieldsFilled(newShowing) && isCorrectInput() && !isOverlapping(newShowing)) {
                         confirmAddShowing(newShowing);
+                        window.sizeToScene();
                     }
                 } catch (NoMovieSelectedException | NoTimeSelectedException
                         | NoRoomSelectedException | OverlappingShowingException rte) {
@@ -247,26 +248,26 @@ public class ManageShowingsView extends View {
     }
 
     public boolean allFieldsFilled(MovieShowing newShowing) {
-//        if (newShowing == null) {
-//            return false;
-//        } else if (newShowing.getMovie() == null || newShowing.getStartTime() == null || selectedRoom == null) {
-//            return false;
-//        }
+       if (newShowing == null) {
+           return false;
+       } else if (newShowing.getMovie() == null || newShowing.getStartTime() == null || selectedRoom == null) {
+           return false;
+       }
         return true;
     }
 
     private boolean isCorrectInput() {
-//        if (choiceBoxMovieResult.getSelectionModel().getSelectedItem() == null)
-//            throw new NoMovieSelectedException();
-//
-//        if (datePickerStartDateResult.getEditor() == null)
-//            throw new NoDateSelectedException();
-//
-//        if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == null)
-//            throw new NoRoomSelectedException();
-//
-//        if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
-//            throw new NoTimeSelectedException();
+       if (choiceBoxMovieResult.getSelectionModel().getSelectedItem() == null)
+           throw new NoMovieSelectedException();
+
+       if (datePickerStartDateResult.getEditor() == null)
+           throw new NoDateSelectedException();
+
+       if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == null)
+           throw new NoRoomSelectedException();
+
+       if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
+           throw new NoTimeSelectedException();
 
         return true;
     }
