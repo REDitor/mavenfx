@@ -203,10 +203,6 @@ public abstract class View {
 
     abstract void setEventHandlers();
 
-    protected void loadSectionInfo() {
-
-    }
-
     abstract void clearFields();
 
     protected void setSelectedRoomView(TableView tableView) {
@@ -221,5 +217,13 @@ public abstract class View {
         tableView.getSelectionModel().clearSelection();
     }
 
+    protected void addToTableViews(MovieShowing showing, Room room) {
+        if (room == room1)
+            tableViewRoom1.getItems().add(showing);
+        else
+            tableViewRoom2.getItems().add(showing);
 
+        tableViewRoom1.refresh();
+        tableViewRoom2.refresh();
+    }
 }

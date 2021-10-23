@@ -27,7 +27,7 @@ import static javax.swing.JOptionPane.showConfirmDialog;
 //TODO: Logout button (Entire thing)
 //TODO: db.add methods
 
-//FIXME: addShowing doesn't seem to work
+//FIXME: addShowing doesn't seem to work --> not passing booleans and not catching exceptions
 //FIXME: Labels not showing for rooms
 
 public class ManageShowingsView extends View {
@@ -130,7 +130,7 @@ public class ManageShowingsView extends View {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 if (datePickerStartDateResult.getEditor().getText().length() >= 8
-                    || datePickerStartDateResult.getEditor().getText().contains("-")) {
+                        || datePickerStartDateResult.getEditor().getText().contains("-")) {
                     String dateString = datePickerStartDateResult.getEditor().getText();
                     if (dateString != null) {
                         selectedDate = LocalDate.parse(dateString, dateFormatter);
@@ -247,26 +247,26 @@ public class ManageShowingsView extends View {
     }
 
     public boolean allFieldsFilled(MovieShowing newShowing) {
-        if (newShowing == null) {
-            return false;
-        } else if (newShowing.getMovie() == null || newShowing.getStartTime() == null || selectedRoom == null) {
-            return false;
-        }
+//        if (newShowing == null) {
+//            return false;
+//        } else if (newShowing.getMovie() == null || newShowing.getStartTime() == null || selectedRoom == null) {
+//            return false;
+//        }
         return true;
     }
 
     private boolean isCorrectInput() {
-        if (choiceBoxMovieResult == null)
-            throw new NoMovieSelectedException();
-
-        if (datePickerStartDateResult.getEditor() == null)
-            throw new NoDateSelectedException();
-
-        if (choiceBoxRoomResult == null)
-            throw new NoRoomSelectedException();
-
-        if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
-            throw new NoTimeSelectedException();
+//        if (choiceBoxMovieResult.getSelectionModel().getSelectedItem() == null)
+//            throw new NoMovieSelectedException();
+//
+//        if (datePickerStartDateResult.getEditor() == null)
+//            throw new NoDateSelectedException();
+//
+//        if (choiceBoxRoomResult.getSelectionModel().getSelectedItem() == null)
+//            throw new NoRoomSelectedException();
+//
+//        if (choiceBoxStartTimeResult.getSelectionModel().getSelectedItem() == null)
+//            throw new NoTimeSelectedException();
 
         return true;
     }
@@ -295,11 +295,12 @@ public class ManageShowingsView extends View {
         );
 
         if (result == YES_NO_OPTION) {
-            selectedRoom.addShowing(showing);
+            db.addShowing(showing, selectedRoom);
             lblInfoMessage.setText(String.format(
                     "Successfully added showing to the schedule:%nRoom: Room %d%nTitle: %s%nStart: %s%nEnd: %s",
                     selectedRoom.getRoomNumber(), showing.getTitle(), showing.getStartTime(), showing.getEndTime()
             ));
+            addToTableViews(showing, selectedRoom);
             clearFields();
         } else
             lblInfoMessage.setText("[Adding Canceled]");

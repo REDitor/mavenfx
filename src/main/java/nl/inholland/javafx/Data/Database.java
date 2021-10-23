@@ -81,6 +81,10 @@ public class Database {
                 )
         );
     }
+
+    public void addShowing(MovieShowing showing, Room room) {
+        room.addShowing(showing);
+    }
     //endregion
 
     //region Users
