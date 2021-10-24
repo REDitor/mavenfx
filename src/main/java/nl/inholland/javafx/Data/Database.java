@@ -1,13 +1,16 @@
 package nl.inholland.javafx.Data;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.chart.ScatterChart;
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.Admin;
 import nl.inholland.javafx.Model.User.User;
+import nl.inholland.javafx.UI.View.ManageShowingsView;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -36,11 +39,23 @@ public class Database {
     public Database() {
         users = new ArrayList<>();
         users.addAll(getUsers());
-        movies = new ArrayList<>();
-        movies.addAll(getMovies());
         room1 = new Room(1, 200);
         room2 = new Room(2, 100);
+        movies = getMovies();
+        //region NOTE (Original Code in case of empty .csv file):
+        // addMovie(new Movie("No time to lie", 12.00, Duration.ofMinutes(Long.parseLong("125"))));
+        // addMovie(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(Long.parseLong("92"))));
+        //endregion
         addInitialShowings();
+    }
+
+    public List<Movie> getMovies() {
+        return readMovies();
+    }
+
+    public void addMovie(Movie movie) {
+        movies.add(movie);
+        writeMovies(movies);
     }
 
     //region Rooms
@@ -121,26 +136,47 @@ public class Database {
     //endregion
 
     //region Movies
-    public List<Movie> getMovies() {
+    public List<Movie> readMovies() {
         List<Movie> dbMovies = new ArrayList<>();
-        try {
-            List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "movies.csv")));
-            for (String line : strings) {
-                dbMovies.add(
-                        new Movie(
-                                line.split(",")[0],
-                                Double.parseDouble(line.split(",")[1]),
-                                Duration.ofMinutes(Long.parseLong(line.split(",")[2]))
-                        )
-                );
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(String.format(PATH, "movies.csv")))) {
+            while (true) {
+                try {
+                    Movie movie = (Movie) ois.readObject();
+                    dbMovies.add(movie);
+                } catch (EOFException eofe) {
+                    break;
+                }
             }
+            // List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "movies.csv")));
+            // for (String line : strings) {
+            //     dbMovies.add(
+            //             new Movie(
+            //                     line.split(",")[0],
+            //                     Double.parseDouble(line.split(",")[1]),
+            //                     Duration.ofMinutes(Long.parseLong(line.split(",")[2]))
+            //             )
+            //     );
+            // }
         } catch (FileNotFoundException fnfe) {
-            //
+            //.
+        } catch (ClassNotFoundException cnfe) {
+
         } catch (IOException ioe) {
             //.....
         }
-
         return dbMovies;
+    }
+
+    public void writeMovies(List<Movie> movies) {
+        try (FileOutputStream fos = new FileOutputStream(String.format(PATH, "movies.csv"))) {
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            for (Movie movie : movies) {
+                oos.writeObject(movie);
+            }
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
     //endregion
 }

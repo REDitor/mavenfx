@@ -5,12 +5,11 @@ import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
 
 public class App extends Application {
-    Database db;
-
     @Override
     public void start(Stage window) {
         Database db = new Database();
         LoginWindow loginWindow = new LoginWindow(db);
+
         window.close();
     }
 }

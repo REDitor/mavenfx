@@ -3,20 +3,20 @@ package nl.inholland.javafx.UI.View;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.util.converter.LocalDateStringConverter;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.User;
 
-import javax.swing.text.DateFormatter;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -74,8 +74,6 @@ public abstract class View {
 
         room1 = db.getRoom1();
         room2 = db.getRoom2();
-        showingsRoom1 = FXCollections.observableArrayList(room1.getShowings());
-        showingsRoom2 = FXCollections.observableArrayList(room2.getShowings());
 
         loadWindow(window);
     }
@@ -85,9 +83,9 @@ public abstract class View {
     }
 
     private void loadWindow(Stage window) {
-        window.setTitle(String.format("Fabulous Cinema -- -- %s -- username: %s",
-                this.getClass().getSimpleName(), user.getUsername()));
         setInitialNodes();
+        instantiateGridPaneElements();
+        setGridPane();
         assignSections();
         styleView();
         setEventHandlers();
@@ -114,10 +112,8 @@ public abstract class View {
         createTableColumns(tableViewRoom1);
         createTableColumns(tableViewRoom2);
 
-        tableViewRoom1.setItems(showingsRoom1);
+        refreshTableViews();
         vBoxRoom1.getChildren().addAll(lblRoom1, tableViewRoom1); //add tableview for room 1 to a container
-
-        tableViewRoom2.setItems(showingsRoom2);
         vBoxRoom2.getChildren().addAll(lblRoom2, tableViewRoom2); //add tableview for room 2 to a container
 
         tableViewContainer.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
@@ -135,32 +131,34 @@ public abstract class View {
         tableViewRoom2 = new TableView<>();
     }
 
-    protected void createTableColumns(TableView tableView) {
-        TableColumn<MovieShowing, LocalDateTime> colStartTime;
-        TableColumn<MovieShowing, LocalDateTime> colEndTime;
-        TableColumn<MovieShowing, String> colTitle;
-        TableColumn<MovieShowing, Integer> colSeats;
-        TableColumn<MovieShowing, Double> colPrice;
-
-        colStartTime = new TableColumn<>("Start");
+    private void createTableColumns(TableView<MovieShowing> tableView) {
+        TableColumn<MovieShowing, LocalDateTime> colStartTime = new TableColumn<>("Start");
         colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
 
-        colEndTime = new TableColumn<>("End");
+        TableColumn<MovieShowing, LocalDateTime> colEndTime = new TableColumn<>("End");
         colEndTime.setCellValueFactory(new PropertyValueFactory<>("endTime"));
 
-        colTitle = new TableColumn<>("Title");
+        TableColumn<MovieShowing, String> colTitle = new TableColumn<>("Title");
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        colSeats = new TableColumn<>("Seats");
+        TableColumn<MovieShowing, Integer> colSeats = new TableColumn<>("Seats");
         colSeats.setCellValueFactory(new PropertyValueFactory<>("numberOfSeats"));
 
-        colPrice = new TableColumn<>("Price");
+        TableColumn<MovieShowing, Double> colPrice = new TableColumn<>("Price");
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         tableView.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
     }
 
-    abstract void setGridPane();
+    protected void setGridPane() {
+        gridPane = new GridPane();
+
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(20);
+        gridPane.setHgap(40);
+
+        assignGrid();
+    }
 
     abstract void assignGrid();
 
@@ -205,6 +203,8 @@ public abstract class View {
 
     abstract void clearFields();
 
+    abstract void instantiateGridPaneElements();
+
     protected void setSelectedRoomView(TableView tableView) {
         if (tableView == tableViewRoom1)
             selectedRoomView = room1;
@@ -213,17 +213,15 @@ public abstract class View {
             selectedRoomView = room2;
     }
 
-    protected void removeSelection(TableView tableView) {
+    protected void deselect(TableView tableView) {
         tableView.getSelectionModel().clearSelection();
     }
 
-    protected void addToTableViews(MovieShowing showing, Room room) {
-        if (room == room1)
-            tableViewRoom1.getItems().add(showing);
-        else
-            tableViewRoom2.getItems().add(showing);
+    public void refreshTableViews() {
+            showingsRoom1 = FXCollections.observableArrayList(room1.getShowings());
+            showingsRoom2 = FXCollections.observableArrayList(room2.getShowings());
 
-        tableViewRoom1.refresh();
-        tableViewRoom2.refresh();
+            tableViewRoom1.setItems(showingsRoom1);
+            tableViewRoom2.setItems(showingsRoom2);
     }
 }

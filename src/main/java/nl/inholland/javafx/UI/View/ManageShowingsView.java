@@ -5,7 +5,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -20,15 +19,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import static javax.swing.JOptionPane.YES_NO_OPTION;
-import static javax.swing.JOptionPane.showConfirmDialog;
+import static javax.swing.JOptionPane.*;
 
-//TODO: ManageMovies (Entire thing)
 //TODO: Logout button (Entire thing)
-//TODO: db.add methods
+//TODO: make adding movie also update showing choicebox
 
-//FIXME: addShowing doesn't seem to work --> not passing booleans and not catching exceptions
 //FIXME: Labels not showing for rooms
+//FIXME: Remove and test double movies
 
 public class ManageShowingsView extends View {
     Movie selectedMovie;
@@ -56,31 +53,21 @@ public class ManageShowingsView extends View {
 
     //endregion
     //endregion
+
     public ManageShowingsView(Database db, Stage window, User user) {
         super(db, window, user);
+        window.setTitle(String.format("Fabulous Cinema -- Manage Showings -- username: %s (%s)",
+                user.getUsername(), user.getPermission()));
     }
 
     @Override
     void setInitialNodes() {
-        lblViewHeader = new Label();
-        lblViewHeader.setText("Manage Showings");
+        lblViewHeader = new Label("Manage Showings");
     }
 
     @Override
     void createConcreteTableViews() {
         super.setTableViews();
-    }
-
-    @Override
-    void setGridPane() {
-        gridPane = new GridPane();
-
-        gridPane.setPadding(new Insets(10));
-        gridPane.setVgap(20);
-        gridPane.setHgap(40);
-
-        instantiateElements();
-        assignGrid();
     }
 
     @Override
@@ -201,9 +188,14 @@ public class ManageShowingsView extends View {
         datePickerStartDateResult.getEditor().clear();
         choiceBoxStartTimeResult.getSelectionModel().clearSelection();
         choiceBoxRoomResult.getSelectionModel().clearSelection();
+        lblEndTimeResult.setText(null);
+        lblNrOfSeats.setText(null);
+        lblPriceResult.setText(null);
+        lblInfoMessage.setText(null);
     }
 
-    private void instantiateElements() {
+    @Override
+    void instantiateGridPaneElements() {
         lblMovieTitle = new Label("Movie Title:");
         choiceBoxMovieResult = new ChoiceBox<>();
         for (Movie movie : db.getMovies()) {
@@ -295,13 +287,18 @@ public class ManageShowingsView extends View {
                 YES_NO_OPTION
         );
 
-        if (result == YES_NO_OPTION) {
+        if (result == YES_OPTION) {
+            if (selectedRoom == room1)
+                showingsRoom1.add(showing);
+            else
+                showingsRoom2.add(showing);
             db.addShowing(showing, selectedRoom);
             lblInfoMessage.setText(String.format(
                     "Successfully added showing to the schedule:%nRoom: Room %d%nTitle: %s%nStart: %s%nEnd: %s",
                     selectedRoom.getRoomNumber(), showing.getTitle(), showing.getStartTime(), showing.getEndTime()
             ));
-            addToTableViews(showing, selectedRoom);
+            // refreshTableViews(showing, selectedRoom);
+            refreshTableViews();
             clearFields();
         } else
             lblInfoMessage.setText("[Adding Canceled]");

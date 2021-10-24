@@ -14,6 +14,7 @@ import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Model.User.Permission;
 import nl.inholland.javafx.Model.User.User;
+import nl.inholland.javafx.UI.View.ManageMoviesView;
 import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
 import nl.inholland.javafx.UI.View.View;
@@ -24,16 +25,16 @@ public class MainWindow {
 
     //region Views
     View ticketView;
-    // View manageMoviesView;
     View manageShowingsView;
+    View manageMoviesView;
     //endregion
 
     //region Elements
     //Container(s)
     VBox vbxMainContainer;
     VBox vbxTicketView;
-    // VBox vbxManageMoviesView;
     VBox vbxManageShowingsView;
+    VBox vbxManageMoviesView;
 
 
     //Scenes
@@ -42,7 +43,7 @@ public class MainWindow {
     //Menu
     MenuBar menuBar;
     Menu userMenu, adminMenu, helpMenu, logoutMenu;
-    MenuItem manageShowingsItem, manageMoviesItem, aboutItem, logoutItem, sellTicketsItem;
+    MenuItem sellTicketsItem, manageShowingsItem, manageMoviesItem, aboutItem, logoutItem;
     //endregion
 
     public MainWindow(Database db, User loggedUser) {
@@ -52,8 +53,8 @@ public class MainWindow {
         Stage window = new Stage();
 
         ticketView = new TicketView(db, window, loggedUser);
-        // manageMoviesView = new ManageMoviesView(db, window);
         manageShowingsView = new ManageShowingsView(db, window, loggedUser);
+        manageMoviesView = new ManageMoviesView(db, window, loggedUser);
 
         loadWindow(window);
     }
@@ -69,10 +70,10 @@ public class MainWindow {
 
         vbxTicketView = ticketView.getView();
         vbxManageShowingsView = manageShowingsView.getView();
+        vbxManageMoviesView = manageMoviesView.getView();
 
-        // vbxManageMoviesView = manageMoviesView.getView();
         vbxMainContainer = new VBox();
-        vbxMainContainer.getChildren().addAll(menuBar, vbxTicketView, vbxManageShowingsView);
+        vbxMainContainer.getChildren().addAll(menuBar, vbxTicketView, vbxManageShowingsView, vbxManageMoviesView);
 
         showSelectedView(vbxTicketView);
 
@@ -118,8 +119,8 @@ public class MainWindow {
     private void hideViews() {
         vbxTicketView.setVisible(false);
         vbxTicketView.setManaged(false);
-        // vbxManageMoviesView.setVisible(false);
-        //...
+        vbxManageMoviesView.setVisible(false);
+        vbxManageMoviesView.setManaged(false);
         vbxManageShowingsView.setVisible(false);
         vbxManageShowingsView.setManaged(false);
     }
@@ -129,25 +130,26 @@ public class MainWindow {
             manageShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
+                    manageShowingsView.refreshTableViews();
                     showSelectedView(vbxManageShowingsView);
                 }
             });
         }
 
-        // if (manageMoviesItem != null) {
-        //     manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
-        //         @Override
-        //         public void handle(ActionEvent actionEvent) {
-        //             hideViews();
-        //             vbxManageMoviesView = manageMoviesView.getView();
-        //             vbxManageMoviesView.setVisible(true);
-        //         }
-        //     });
-        // }
+        if (manageMoviesItem != null) {
+            manageMoviesItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent actionEvent) {
+                    manageMoviesView.refreshTableViews();
+                    showSelectedView(vbxManageMoviesView);
+                }
+            });
+        }
 
         sellTicketsItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                ticketView.refreshTableViews();
                 showSelectedView(vbxTicketView);
             }
         });

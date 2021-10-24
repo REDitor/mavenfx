@@ -2,12 +2,8 @@ package nl.inholland.javafx.UI.View;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import nl.inholland.javafx.Data.Database;
@@ -20,7 +16,6 @@ import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.Theatre.Ticket;
 import nl.inholland.javafx.Model.User.User;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,12 +43,15 @@ public class TicketView extends View {
 
     public TicketView(Database db, Stage window, User user) {
         super(db, window, user);
+        window.setTitle(String.format("Fabulous Cinema -- Sell Tickets -- username: %s (%s)",
+                user.getUsername(), user.getPermission()));
         soldTickets = new ArrayList<>();
     }
 
     @Override
     public void setInitialNodes() {
         lblViewHeader = new Label("Purchase Tickets");
+        instantiateGridPaneElements();
     }
 
     @Override
@@ -66,23 +64,16 @@ public class TicketView extends View {
         tableViewRoom1.setOnMouseClicked(e -> {
             setSelectedRoomView(tableViewRoom1);
             if (tableViewRoom1.getSelectionModel().getSelectedItem() != null) {
-                removeSelection(tableViewRoom2);
+                deselect(tableViewRoom2);
                 selectedShowing = tableViewRoom1.getSelectionModel().getSelectedItem();
                 loadSelectionInfo(selectedShowing, room1);
-            }
-        });
-
-        tableViewRoom1.setColumnResizePolicy(new Callback<TableView.ResizeFeatures, Boolean>() {
-            @Override
-            public Boolean call(TableView.ResizeFeatures resizeFeatures) {
-                return true;
             }
         });
 
         tableViewRoom2.setOnMouseClicked(e -> {
             setSelectedRoomView(tableViewRoom2);
             if (tableViewRoom2.getSelectionModel().getSelectedItem() != null) {
-                removeSelection(tableViewRoom1);
+                deselect(tableViewRoom1);
                 selectedShowing = tableViewRoom2.getSelectionModel().getSelectedItem();
                 loadSelectionInfo(selectedShowing, room2);
             }
@@ -111,8 +102,8 @@ public class TicketView extends View {
             @Override
             public void handle(ActionEvent actionEvent) {
                 clearFields();
-                removeSelection(tableViewRoom1);
-                removeSelection(tableViewRoom2);
+                deselect(tableViewRoom1);
+                deselect(tableViewRoom2);
                 gridPane.setVisible(false);
                 window.sizeToScene();
             }
@@ -130,7 +121,8 @@ public class TicketView extends View {
         lblInfoMessage.setText(null);
     }
 
-    private void instantiateElements() {
+    @Override
+    void instantiateGridPaneElements() {
         lblRoom = new Label("Room:");
         lblRoomResult = new Label();
         lblMovieTitle = new Label("Movie Title:");
@@ -158,20 +150,6 @@ public class TicketView extends View {
         lblMovieTitleResult.setText(showing.getTitle());
         lblStartTimeResult.setText(showing.getStartTime().toString());
         lblEndTimeResult.setText(showing.getEndTime().toString());
-    }
-
-    @Override
-    void setGridPane() {
-        gridPane = new GridPane();
-
-        gridPane.setPadding(new Insets(10));
-        gridPane.setVgap(20);
-        gridPane.setHgap(40);
-
-        instantiateElements();
-
-
-        assignGrid();
     }
 
     @Override

@@ -1,5 +1,14 @@
 # Additional Information
 
+###Just to be sure:
+        NOTE: the database movies are dependent on the 
+        .csv file
+        if for any reason the file is empty 
+        there are 2 commented lines in the database 
+        constructor
+        which will write the 2 initial movies to the file.
+        this probably wont be the case 
+        but just to be sure :)
 
 ##Accounts:
 ###User #1 (Admin):
@@ -18,14 +27,21 @@
         username: Daniel
         password: myPassword15*
 
-
-[StackOverflow](https://www.stackoverflow.com)
-2. ordered list
-
-* unordered list
-* unordered list
-
-`find . -type f -name "*.java" -ls` //tells you how many lines of java code there are
-
-_ITALIC_
-__BOLD__
+##Dependencies:
+* 
+        <dependency>
+        <groupId>org.openjfx</groupId>
+            <artifactId>javafx</artifactId>
+            <version>${javafx.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jfxtras</groupId>
+            <artifactId>jmetro</artifactId>
+            <version>11.6.15</version>
+        </dependency>

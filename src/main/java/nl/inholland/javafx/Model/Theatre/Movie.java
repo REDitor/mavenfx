@@ -1,8 +1,9 @@
 package nl.inholland.javafx.Model.Theatre;
 
+import java.io.Serializable;
 import java.time.Duration;
 
-public class Movie {
+public class Movie implements Serializable {
     private String title;
     private double price;
     private Duration duration;
@@ -15,10 +16,5 @@ public class Movie {
         this.title = title;
         this.price = price;
         this.duration = duration;
-    }
-
-    @Override
-    public String toString() {
-        return this.getTitle();
     }
 }
