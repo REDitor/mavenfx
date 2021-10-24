@@ -9,6 +9,7 @@ import nl.inholland.javafx.Model.User.User;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class Database {
         room2 = new Room(2, 100);
         movies = getMovies();
         //region NOTE (Original Code in case of empty .csv file):
-        // addMovie(new Movie("No time to lie", 12.00, Duration.ofMinutes(Long.parseLong("125"))));
-        // addMovie(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(Long.parseLong("92"))));
+        addMovie(new Movie("No time to lie", 12.00, Duration.ofMinutes(Long.parseLong("125"))));
+        addMovie(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(Long.parseLong("92"))));
         //endregion
         addInitialShowings();
     }

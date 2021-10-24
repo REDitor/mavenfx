@@ -167,7 +167,7 @@ public class ManageMoviesView extends View {
         lblMovieTitle = new Label("Title:");
         txtMovieTitleResult = new TextField();
         txtMovieTitleResult.setPromptText("Enter a movie title...");
-        lblDuration = new Label("Duration:");
+        lblDuration = new Label("Duration Hours + Minutes:");
         choiceBoxDurationHours = new ChoiceBox<>();
         choiceBoxDurationHours.getItems().addAll(getHourOptions());
         choiceBoxDurationMinutes = new ChoiceBox<>();
