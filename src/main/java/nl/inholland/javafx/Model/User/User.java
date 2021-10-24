@@ -5,9 +5,17 @@ public class User {
     protected String password;
     protected Permission permission;
 
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public Permission getPermission() { return permission; }
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Permission getPermission() {
+        return permission;
+    }
 
     public User(String username, String password) {
         this.username = username;

@@ -38,7 +38,6 @@ public class LoginWindow {
     Label lblErrorMessage = new Label();
     //endregion
 
-    //region Initiate Window
     private void loadWindow(Stage window) {
         window.sizeToScene();
         window.setTitle("Fabulous Cinema -- Login");
@@ -145,7 +144,6 @@ public class LoginWindow {
             }
         });
     }
-    //endregion
 
     public LoginWindow(Database db) {
         this.db = Objects.requireNonNullElseGet(db, Database::new);

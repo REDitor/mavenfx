@@ -226,11 +226,11 @@ public abstract class View {
     }
 
     public void refreshTableViews() {
-            showingsRoom1 = FXCollections.observableArrayList(room1.getShowings());
-            showingsRoom2 = FXCollections.observableArrayList(room2.getShowings());
+        showingsRoom1 = FXCollections.observableArrayList(room1.getShowings());
+        showingsRoom2 = FXCollections.observableArrayList(room2.getShowings());
 
-            tableViewRoom1.setItems(showingsRoom1);
-            tableViewRoom2.setItems(showingsRoom2);
+        tableViewRoom1.setItems(showingsRoom1);
+        tableViewRoom2.setItems(showingsRoom2);
     }
 
     public void refreshMovies() {

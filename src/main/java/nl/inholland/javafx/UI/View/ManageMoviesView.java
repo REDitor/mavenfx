@@ -5,7 +5,6 @@ import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -15,6 +14,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Exception.NoDurationSelectedException;
+import nl.inholland.javafx.Exception.NoMovieSelectedException;
+import nl.inholland.javafx.Exception.NoOrWrongPriceInputException;
+import nl.inholland.javafx.Exception.NoTitleEnteredException;
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.User.User;
 
@@ -86,7 +89,7 @@ public class ManageMoviesView extends View {
             String durationString = String.format("%2d minute(s)", mm);
             StringProperty durationProperty = new SimpleStringProperty(durationString);
             return durationProperty;
-                });
+        });
         colDuration.setMinWidth(250);
 
         tableView.getColumns().addAll(colMovieTitle, colPrice, colDuration);
@@ -134,12 +137,19 @@ public class ManageMoviesView extends View {
         btnAddMovie.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                Movie newMovie = new Movie(
-                        txtMovieTitleResult.getText(),
-                        Double.parseDouble(txtPriceResult.getText()),
-                        selectedDuration
-                );
-                confirmAddMovie(newMovie);
+                try {
+                    if (isCorrecInput()) {
+                        Movie newMovie = new Movie(
+                                txtMovieTitleResult.getText(),
+                                Double.parseDouble(txtPriceResult.getText()),
+                                selectedDuration
+                        );
+                        confirmAddMovie(newMovie);
+                    }
+                } catch (NoTitleEnteredException | NoDurationSelectedException | NoOrWrongPriceInputException rte) {
+                    lblInfoMessage.setStyle("-fx-text-fill: red");
+                    lblInfoMessage.setText(rte.getMessage());
+                }
                 refreshTableViews();
                 window.sizeToScene();
             }
@@ -196,6 +206,18 @@ public class ManageMoviesView extends View {
         }
 
         return minuteOptions;
+    }
+
+    private boolean isCorrecInput() {
+        if (txtMovieTitleResult.getText().length() < 1)
+            throw new NoTitleEnteredException();
+        else if (choiceBoxDurationHours.getSelectionModel().getSelectedItem() == null
+                || choiceBoxDurationMinutes.getSelectionModel().getSelectedItem() == null)
+            throw new NoDurationSelectedException();
+        else if (txtPriceResult.getText().length() < 1 || !txtPriceResult.getText().matches("^\\d{0,10}(\\.\\d{2}$)"))
+            throw new NoOrWrongPriceInputException();
+
+        return true;
     }
 
     private void confirmAddMovie(Movie movie) {

@@ -39,30 +39,13 @@ public class Database {
         room2 = new Room(2, 100);
         movies = getMovies();
         //region NOTE (Original Code in case of empty .csv file):
-        addMovie(new Movie("No time to lie", 12.00, Duration.ofMinutes(Long.parseLong("125"))));
-        addMovie(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(Long.parseLong("92"))));
+        // addMovie(new Movie("No time to lie", 12.00, Duration.ofMinutes(Long.parseLong("125"))));
+        // addMovie(new Movie("The Addams Family 19", 9.00, Duration.ofMinutes(Long.parseLong("92"))));
         //endregion
         addInitialShowings();
     }
 
-    public List<Movie> getMovies() {
-        return readMovies();
-    }
-
-    public List<String> getMovieTitles() {
-        List<String> movieTitles = new ArrayList<>();
-        for (Movie movie : getMovies()) {
-            movieTitles.add(movie.getTitle());
-        }
-        return movieTitles;
-    }
-
-    public void addMovie(Movie movie) {
-        movies.add(movie);
-        writeMovies(movies);
-    }
-
-    //region Rooms
+    //region Rooms/Showings
     private void addInitialShowings() {
         //Room1
         room1.addShowing(
@@ -140,6 +123,23 @@ public class Database {
     //endregion
 
     //region Movies
+    public List<Movie> getMovies() {
+        return readMovies();
+    }
+
+    public List<String> getMovieTitles() {
+        List<String> movieTitles = new ArrayList<>();
+        for (Movie movie : getMovies()) {
+            movieTitles.add(movie.getTitle());
+        }
+        return movieTitles;
+    }
+
+    public void addMovie(Movie movie) {
+        movies.add(movie);
+        writeMovies(movies);
+    }
+
     public List<Movie> readMovies() {
         List<Movie> dbMovies = new ArrayList<>();
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(String.format(PATH, "movies.csv")))) {
