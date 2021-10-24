@@ -19,15 +19,15 @@ import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
 import nl.inholland.javafx.UI.View.View;
 
+import static javax.swing.JOptionPane.*;
+
 public class MainWindow {
     Database db;
     User loggedUser;
 
-    //region Views
     View ticketView;
     View manageShowingsView;
     View manageMoviesView;
-    //endregion
 
     //region Elements
     //Container(s)
@@ -59,8 +59,9 @@ public class MainWindow {
         loadWindow(window);
     }
 
-    //region Initiate Window
     private void loadWindow(Stage window) {
+        window.setTitle(String.format("Fabulous Cinema -- Sell Tickets -- username: %s (%s)",
+                loggedUser.getUsername(), loggedUser.getPermission()));
         window.sizeToScene();
 
         //Create elements based on user permission
@@ -131,6 +132,7 @@ public class MainWindow {
                 @Override
                 public void handle(ActionEvent actionEvent) {
                     manageShowingsView.refreshTableViews();
+                    manageShowingsView.refreshMovies();
                     showSelectedView(vbxManageShowingsView);
                 }
             });
@@ -153,6 +155,23 @@ public class MainWindow {
                 showSelectedView(vbxTicketView);
             }
         });
+
+        logoutItem.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                int result = showConfirmDialog(
+                        null,
+                        "Are you sure you want to log out?",
+                        "Confirm Logout",
+                        YES_NO_OPTION
+                );
+
+                if (result == YES_OPTION) {
+                    LoginWindow loginWindow = new LoginWindow(db);
+                    window.close();
+                }
+            }
+        });
     }
 
     private void showSelectedView(Node node) {
@@ -167,6 +186,4 @@ public class MainWindow {
         scene.getStylesheets().add("css/style.css");
         menuBar.setId("menu");
     }
-    //endregion
-
 }

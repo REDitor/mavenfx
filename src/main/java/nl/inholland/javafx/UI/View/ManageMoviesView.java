@@ -1,5 +1,7 @@
 package nl.inholland.javafx.UI.View;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -12,13 +14,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import nl.inholland.javafx.Data.Database;
-import nl.inholland.javafx.Exception.IncorrectPriceFormatException;
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.User.User;
 
-import javax.swing.*;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +25,6 @@ import java.util.List;
 import static javax.swing.JOptionPane.*;
 
 public class ManageMoviesView extends View {
-    // ObservableList<Integer> durationHourOptions;
-    // ObservableList<Integer> durationMinuteOptions;
-    private ObservableList<Movie> listedMovies;
-
     Duration selectedDuration;
 
     //region Elements
@@ -80,12 +75,18 @@ public class ManageMoviesView extends View {
         colMovieTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colMovieTitle.setMinWidth(500);
 
-        TableColumn<Movie, Double> colPrice = new TableColumn<>("Price");
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        TableColumn<Movie, String> colPrice = new TableColumn<>("Price");
+        colPrice.setCellValueFactory(cellData ->
+                new SimpleStringProperty(currencyFormat.format(cellData.getValue().getPrice())));
         colPrice.setMinWidth(250);
 
-        TableColumn<Movie, Duration> colDuration = new TableColumn<>("Duration");
-        colDuration.setCellValueFactory(new PropertyValueFactory<>("duration"));
+        TableColumn<Movie, String> colDuration = new TableColumn<>("Duration");
+        colDuration.setCellValueFactory(cellData -> {
+            long mm = cellData.getValue().getDuration().toMinutes();
+            String durationString = String.format("%2d minute(s)", mm);
+            StringProperty durationProperty = new SimpleStringProperty(durationString);
+            return durationProperty;
+                });
         colDuration.setMinWidth(250);
 
         tableView.getColumns().addAll(colMovieTitle, colPrice, colDuration);

@@ -1,19 +1,14 @@
 package nl.inholland.javafx.Data;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.chart.ScatterChart;
 import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.Admin;
 import nl.inholland.javafx.Model.User.User;
-import nl.inholland.javafx.UI.View.ManageShowingsView;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -51,6 +46,14 @@ public class Database {
 
     public List<Movie> getMovies() {
         return readMovies();
+    }
+
+    public List<String> getMovieTitles() {
+        List<String> movieTitles = new ArrayList<>();
+        for (Movie movie : getMovies()) {
+            movieTitles.add(movie.getTitle());
+        }
+        return movieTitles;
     }
 
     public void addMovie(Movie movie) {
@@ -147,16 +150,6 @@ public class Database {
                     break;
                 }
             }
-            // List<String> strings = Files.readAllLines(Paths.get(String.format(PATH, "movies.csv")));
-            // for (String line : strings) {
-            //     dbMovies.add(
-            //             new Movie(
-            //                     line.split(",")[0],
-            //                     Double.parseDouble(line.split(",")[1]),
-            //                     Duration.ofMinutes(Long.parseLong(line.split(",")[2]))
-            //             )
-            //     );
-            // }
         } catch (FileNotFoundException fnfe) {
             //.
         } catch (ClassNotFoundException cnfe) {

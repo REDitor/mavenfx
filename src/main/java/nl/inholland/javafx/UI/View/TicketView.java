@@ -2,10 +2,12 @@ package nl.inholland.javafx.UI.View;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import nl.inholland.javafx.Data.Database;
 import nl.inholland.javafx.Exception.NoNameException;
 import nl.inholland.javafx.Exception.NoShowingSelectedException;

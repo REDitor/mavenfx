@@ -1,8 +1,11 @@
 package nl.inholland.javafx.UI.View;
 
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -21,11 +24,7 @@ import java.time.LocalTime;
 
 import static javax.swing.JOptionPane.*;
 
-//TODO: Logout button (Entire thing)
-//TODO: make adding movie also update showing choicebox
-
 //FIXME: Labels not showing for rooms
-//FIXME: Remove and test double movies
 
 public class ManageShowingsView extends View {
     Movie selectedMovie;
@@ -198,9 +197,7 @@ public class ManageShowingsView extends View {
     void instantiateGridPaneElements() {
         lblMovieTitle = new Label("Movie Title:");
         choiceBoxMovieResult = new ChoiceBox<>();
-        for (Movie movie : db.getMovies()) {
-            choiceBoxMovieResult.getItems().add(movie.getTitle());
-        }
+        refreshMovies();
         lblStartDateTime = new Label("Start:");
         datePickerStartDateResult = new DatePicker();
         choiceBoxStartTimeResult = new ChoiceBox<>();
@@ -306,5 +303,12 @@ public class ManageShowingsView extends View {
 
     private LocalDateTime calcEndTime(LocalDateTime startTime) {
         return startTime.plusMinutes(selectedMovie.getDuration().toMinutes());
+    }
+
+    @Override
+    public void refreshMovies() {
+        super.refreshMovies();
+        ObservableList<String> movieTitles = FXCollections.observableArrayList(db.getMovieTitles());
+        choiceBoxMovieResult.setItems(movieTitles);
     }
 }

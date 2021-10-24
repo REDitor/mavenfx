@@ -11,6 +11,7 @@
         but just to be sure :)
 
 ##Accounts:
+NOTE: username and password are case-sensitive
 ###User #1 (Admin):
         username: Sander
         password: myPassword12*

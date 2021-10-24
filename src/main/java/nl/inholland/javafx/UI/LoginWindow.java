@@ -40,8 +40,7 @@ public class LoginWindow {
 
     //region Initiate Window
     private void loadWindow(Stage window) {
-        window.setHeight(175);
-        window.setWidth(260);
+        window.sizeToScene();
         window.setTitle("Fabulous Cinema -- Login");
 
         gridPane.setPadding(new Insets(10));
@@ -67,7 +66,9 @@ public class LoginWindow {
         txtUsername.setPromptText("Enter username");
         pwfPassword.setPromptText("Enter password");
         lblErrorMessage.setVisible(false);
+        lblErrorMessage.setManaged(false);
         btnLogin.setVisible(false);
+        btnLogin.setManaged(false);
 
         JMetro jMetro = new JMetro(Style.DARK);
         jMetro.setScene(scene);
@@ -106,6 +107,9 @@ public class LoginWindow {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
                 btnLogin.setVisible(pwfPassword.getText().matches("(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$"));
+                btnLogin.setManaged(btnLogin.isVisible());
+
+                loginWindow.sizeToScene();
             }
         });
 
@@ -133,8 +137,10 @@ public class LoginWindow {
                     pwfPassword.clear();
                     throw new UserNotFoundException();
                 } catch (UserNotFoundException | IncorrectPasswordException rte) {
+                    lblErrorMessage.setManaged(true);
                     lblErrorMessage.setVisible(true);
                     lblErrorMessage.setText(rte.getMessage());
+                    loginWindow.sizeToScene();
                 }
             }
         });

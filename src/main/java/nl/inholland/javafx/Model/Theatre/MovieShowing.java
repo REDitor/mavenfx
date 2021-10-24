@@ -69,7 +69,6 @@ public class MovieShowing {
         this.numberOfSeats = room.getNumberOfSeats();
     }
 
-
     public void deductAvailableTickets(int numberOfTickets) {
         availableTickets -= numberOfTickets;
     }

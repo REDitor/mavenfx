@@ -1,5 +1,6 @@
 package nl.inholland.javafx.UI.View;
 
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -13,17 +14,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import nl.inholland.javafx.Data.Database;
+import nl.inholland.javafx.Model.Theatre.Movie;
 import nl.inholland.javafx.Model.Theatre.MovieShowing;
 import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.User;
 
-import java.time.LocalDateTime;
+import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 
 public abstract class View {
     protected final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm");
     protected final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     protected final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+    protected final DecimalFormat currencyFormat = new DecimalFormat("€ 0.00");
 
     Database db;
     Stage window;
@@ -33,6 +36,7 @@ public abstract class View {
     Room room2;
     ObservableList<MovieShowing> showingsRoom1;
     ObservableList<MovieShowing> showingsRoom2;
+    ObservableList<Movie> listedMovies;
     Room selectedRoomView;
     MovieShowing selectedShowing;
 
@@ -115,7 +119,6 @@ public abstract class View {
         refreshTableViews();
         vBoxRoom1.getChildren().addAll(lblRoom1, tableViewRoom1); //add tableview for room 1 to a container
         vBoxRoom2.getChildren().addAll(lblRoom2, tableViewRoom2); //add tableview for room 2 to a container
-
         tableViewContainer.getChildren().addAll(vBoxRoom1, vBoxRoom2); //add both tableview containers to a container
     }
 
@@ -132,20 +135,23 @@ public abstract class View {
     }
 
     private void createTableColumns(TableView<MovieShowing> tableView) {
-        TableColumn<MovieShowing, LocalDateTime> colStartTime = new TableColumn<>("Start");
-        colStartTime.setCellValueFactory(new PropertyValueFactory<>("startTime"));
+        TableColumn<MovieShowing, String> colStartTime = new TableColumn<>("Start");
+        colStartTime.setCellValueFactory(cellData ->
+                new SimpleStringProperty(dateTimeFormatter.format(cellData.getValue().getStartTime())));
 
-        TableColumn<MovieShowing, LocalDateTime> colEndTime = new TableColumn<>("End");
-        colEndTime.setCellValueFactory(new PropertyValueFactory<>("endTime"));
+        TableColumn<MovieShowing, String> colEndTime = new TableColumn<>("End");
+        colEndTime.setCellValueFactory(cellData ->
+                new SimpleStringProperty(dateTimeFormatter.format(cellData.getValue().getEndTime())));
 
         TableColumn<MovieShowing, String> colTitle = new TableColumn<>("Title");
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<MovieShowing, Integer> colSeats = new TableColumn<>("Seats");
+        TableColumn<MovieShowing, String> colSeats = new TableColumn<>("Seats");
         colSeats.setCellValueFactory(new PropertyValueFactory<>("numberOfSeats"));
 
-        TableColumn<MovieShowing, Double> colPrice = new TableColumn<>("Price");
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        TableColumn<MovieShowing, String> colPrice = new TableColumn<>("Price");
+        colPrice.setCellValueFactory(cellData ->
+                new SimpleStringProperty(currencyFormat.format(cellData.getValue().getPrice())));
 
         tableView.getColumns().addAll(colStartTime, colEndTime, colTitle, colSeats, colPrice);
     }
@@ -191,12 +197,14 @@ public abstract class View {
 
     private void styleRoomTableViews() {
         vBoxRoom1.setId("tableView");
-        vBoxRoom1.setPadding(new Insets(0, 5, 10, 0));
+        lblRoom1.setStyle("-fx-text-fill: #19295e; -fx-font-size: 12");
+        vBoxRoom1.setPadding(new Insets(10, 5, 10, 0));
         vBoxRoom1.setMinWidth(625);
 
         vBoxRoom2.setId("tableView");
+        lblRoom2.setStyle("-fx-text-fill: #19295e; -fx-font-size: 12");
+        vBoxRoom2.setPadding(new Insets(10, 0, 10, 5));
         vBoxRoom2.setMinWidth(625);
-        vBoxRoom2.setPadding(new Insets(0, 0, 10, 5));
     }
 
     abstract void setEventHandlers();
@@ -223,5 +231,9 @@ public abstract class View {
 
             tableViewRoom1.setItems(showingsRoom1);
             tableViewRoom2.setItems(showingsRoom2);
+    }
+
+    public void refreshMovies() {
+        listedMovies = FXCollections.observableArrayList(db.getMovies());
     }
 }
