@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -44,6 +45,7 @@ public abstract class View {
     VBox mainContainer;
     //region mainContainer
     Label lblViewHeader;
+    TextField txtSearchBox; //Exam question 1
     HBox tableViewContainer;
     //region tableViewContainer
     VBox vBoxRoom1;
@@ -105,7 +107,16 @@ public abstract class View {
         inputContainer = new VBox();
         inputContainer.getChildren().addAll(gridPane, infoMessageContainer);
 
+        if (this instanceof TicketView) {
+            txtSearchBox = new TextField();
+            txtSearchBox.setPromptText("Enter a title");
+        }
+
         mainContainer = new VBox();
+
+        if (txtSearchBox != null)
+            mainContainer.getChildren().add(txtSearchBox);
+
         mainContainer.getChildren().addAll(lblViewHeader, tableViewContainer, inputContainer); //add all containers to the parent container
     }
 

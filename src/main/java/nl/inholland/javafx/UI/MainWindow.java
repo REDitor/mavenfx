@@ -9,6 +9,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import nl.inholland.javafx.Data.Database;
@@ -18,6 +19,10 @@ import nl.inholland.javafx.UI.View.ManageMoviesView;
 import nl.inholland.javafx.UI.View.ManageShowingsView;
 import nl.inholland.javafx.UI.View.TicketView;
 import nl.inholland.javafx.UI.View.View;
+
+import javax.swing.*;
+import java.io.File;
+import java.io.IOException;
 
 import static javax.swing.JOptionPane.*;
 
@@ -43,7 +48,7 @@ public class MainWindow {
     //Menu
     MenuBar menuBar;
     Menu userMenu, adminMenu, helpMenu, logoutMenu;
-    MenuItem sellTicketsItem, manageShowingsItem, manageMoviesItem, aboutItem, logoutItem;
+    MenuItem sellTicketsItem, manageShowingsItem, manageMoviesItem, exportShowingsItem, aboutItem, logoutItem;
     //endregion
 
     public MainWindow(Database db, User loggedUser) {
@@ -98,7 +103,9 @@ public class MainWindow {
             manageShowingsItem = new MenuItem("Manage Showings");
             manageMoviesItem = new MenuItem("Manage Movies");
 
-            adminMenu.getItems().addAll(sellTicketsItem, manageShowingsItem, manageMoviesItem);
+            exportShowingsItem = new MenuItem("Export Showings...");
+
+            adminMenu.getItems().addAll(sellTicketsItem, manageShowingsItem, manageMoviesItem, exportShowingsItem);
             menuBar.getMenus().add(adminMenu);
         } else {
             userMenu = new Menu("User");
@@ -148,6 +155,34 @@ public class MainWindow {
             });
         }
 
+//        if (exportShowingsItem != null) {
+//            exportShowingsItem.setOnAction(new EventHandler<ActionEvent>() {
+//                @Override
+//                public void handle(ActionEvent actionEvent) {
+//                    try {
+//                        JFileChooser fileChooser = new JFileChooser();
+//                        fileChooser.setFileHidingEnabled(true);
+//                        fileChooser.setAcceptAllFileFilterUsed(false);
+//                        fileChooser.getApproveButtonText();
+//
+//                        JFrame jFrame = new JFrame();
+//                        int result = fileChooser.showOpenDialog(jFrame);
+//                        if (result == JFileChooser.APPROVE_OPTION) {
+//                            File file = fileChooser.getSelectedFile();
+//                            db.writeShowings(
+//                                    db.getRoom1().getShowings(),
+//                                    db.getRoom2().getShowings(),
+//                                    file
+//                            );
+//                        }
+//
+//                    } catch(IOException ioe) {
+//                        ioe.printStackTrace();
+//                    }
+//                }
+//            });
+//        }
+
         sellTicketsItem.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
@@ -170,6 +205,16 @@ public class MainWindow {
                     LoginWindow loginWindow = new LoginWindow(db);
                     window.close();
                 }
+            }
+        });
+
+        //region Assignment 3
+        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                ModalWindow modalWindow = new ModalWindow(window);
+                if (modalWindow.checkCancel())
+                    windowEvent.consume();
             }
         });
     }

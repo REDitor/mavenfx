@@ -6,14 +6,15 @@ import nl.inholland.javafx.Model.Theatre.Room;
 import nl.inholland.javafx.Model.User.Admin;
 import nl.inholland.javafx.Model.User.User;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.JarFile;
 
 public class Database {
     private static final String PATH = "src/main/resources/%s";
@@ -83,6 +84,20 @@ public class Database {
                 )
         );
     }
+
+//    public void writeShowings(List<MovieShowing> showingsRoom1, List<MovieShowing> showingsRoom2, File file) throws IOException {
+//
+//
+//        List<MovieShowing> allShowings = new ArrayList<>();
+//        allShowings.addAll(showingsRoom1);
+//        allShowings.addAll(showingsRoom2);
+//        FileOutputStream fos = new FileOutputStream(new File(file));
+//        ObjectOutputStream oos = new ObjectOutputStream(fos);
+//        for (MovieShowing showing : allShowings) {
+//            oos.writeObject(showing);
+//        }
+//
+//    }
 
     public void addShowing(MovieShowing showing, Room room) {
         room.addShowing(showing);

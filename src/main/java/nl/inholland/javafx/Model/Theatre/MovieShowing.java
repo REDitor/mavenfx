@@ -1,10 +1,12 @@
 package nl.inholland.javafx.Model.Theatre;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class MovieShowing {
+public class MovieShowing implements Serializable {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private String roomName;
     Movie movie;
     private String title;
     private double price;
@@ -51,6 +53,7 @@ public class MovieShowing {
         this.availableTickets = room.getNumberOfSeats();
         this.price = movie.getPrice();
         this.numberOfSeats = room.getNumberOfSeats();
+        this.roomName = room.toString();
     }
 
     public void deductAvailableTickets(int numberOfTickets) {

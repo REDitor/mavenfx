@@ -1,5 +1,10 @@
 package nl.inholland.javafx.UI.View;
 
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
@@ -26,6 +31,10 @@ import static javax.swing.JOptionPane.showConfirmDialog;
 
 public class TicketView extends View {
     List<Ticket> soldTickets;
+    FilteredList<MovieShowing> filteredShowingsRoom1;
+    FilteredList<MovieShowing> filteredShowingsRoom2;
+    SortedList<MovieShowing> sortedShowingsRoom1;
+    SortedList<MovieShowing> sortedShowingsRoom2;
 
     //region TicketView Elements
     Label lblRoom;
@@ -110,6 +119,45 @@ public class TicketView extends View {
                 window.sizeToScene();
             }
         });
+
+        filteredShowingsRoom1 = new FilteredList<>(showingsRoom1, p -> true);
+        filteredShowingsRoom2 = new FilteredList<>(showingsRoom2, p -> true);
+
+        StringProperty searchProperty = txtSearchBox.textProperty();
+        searchProperty.addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
+                filteredShowingsRoom1.setPredicate(movieShowing -> {
+                    if (newValue == null || newValue.isEmpty())
+                        return true;
+
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if (movieShowing.getTitle().toLowerCase().contains(lowerCaseFilter))
+                        return true;
+
+                    return false;
+                });
+                filteredShowingsRoom2.setPredicate(movieShowing -> {
+                    if (newValue == null || newValue.isEmpty())
+                        return true;
+
+                    String lowerCaseFilter = newValue.toLowerCase();
+
+                    if (movieShowing.getTitle().toLowerCase().contains(lowerCaseFilter))
+                        return true;
+
+                    return false;
+                });
+            }
+        });
+
+        sortedShowingsRoom1 = new SortedList<>(filteredShowingsRoom1);
+        sortedShowingsRoom2 = new SortedList<>(filteredShowingsRoom2);
+        sortedShowingsRoom1.comparatorProperty().bind((tableViewRoom1.comparatorProperty()));
+        sortedShowingsRoom2.comparatorProperty().bind(tableViewRoom2.comparatorProperty());
+        tableViewRoom1.setItems(sortedShowingsRoom1);
+        tableViewRoom2.setItems(sortedShowingsRoom2);
     }
 
     @Override
